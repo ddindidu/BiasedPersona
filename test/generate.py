@@ -1,0 +1,96 @@
+import openai
+import time, argparse
+
+OPENAI_API_KEY = [
+    "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",
+    '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',
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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"
+    ]
+# default
+client = openai.OpenAI(
+    api_key=OPENAI_API_KEY[0]
+)
+
+
+def get_openai_client(args):
+    '''
+    :param      args: get args with openai API key
+    :return:    openai client (obj)
+    '''
+    global OPENAI_API_KEY
+
+    return openai.OpenAI(
+        api_key=OPENAI_API_KEY[args.api_key]
+    )
+
+
+def generate(args, client, pa_instruction, context, question, options):
+    if args.toy == 1:
+        print(pa_instruction)
+
+    formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet.\n\n" \
+               "Context: {}\n" \
+               "Question: {}\n".format(context, question)
+    option = "(A): {}\n(B): {}\n(C): {}\n".format(options[0], options[1], options[2])
+    guidance = "Answer:"
+
+    messages = [
+        {"role": "system", "content": pa_instruction},
+        {"role": "user", "content": formatted_question},
+        {"role": "user", "content": option},
+        {"role": "user", "content": guidance},
+    ]
+
+    while True:
+        try:
+            response = client.chat.completions.create(
+                model=args.model,
+                messages=messages
+            )
+            break
+        except Exception as e:
+            print("Exception: ", e)
+            time.sleep(10)
+
+    res = response.choices[0].message.content
+    return res
+
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--source_dir', type=str, default='./../source/')
+    parser.add_argument('--output_dir', type=str, default='./../results/')
+
+    parser.add_argument('--generic_no', type=int, default=0)
+    parser.add_argument('--specific_no', type=int, default=0)
+
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+
+    parser.add_argument('--iteration', type=int, default=10)
+    parser.add_argument('--instruction_k', type=int, default=5)
+    parser.add_argument('--mpi_k', type=int, default=None)
+    parser.add_argument('--big5', type=int, default=60) # version... {50, 60}
+
+    parser.add_argument('--doMPI', type=int, default=0)
+    parser.add_argument('--doBig5', type=int, default=0)
+
+    parser.add_argument('--toy', type=int, default=0)
+    parser.add_argument('--api_key', type=int, default=0)
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = get_args()
+    res = generate(args, client, "You are a woman.", "I go to pieces under stress.")
+    print(res)
