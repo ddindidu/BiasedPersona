@@ -33,9 +33,6 @@ def get_openai_client(args):
 
 
 def generate(args, client, pa_instruction, context, question, options):
-    if args.toy == 1:
-        print(pa_instruction)
-
     formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet.\n\n" \
                "Context: {}\n" \
                "Question: {}\n".format(context, question)
@@ -48,6 +45,13 @@ def generate(args, client, pa_instruction, context, question, options):
         {"role": "user", "content": option},
         {"role": "user", "content": guidance},
     ]
+
+    #'''
+    if args.toy == 1:
+        print(pa_instruction)
+        print(messages)
+        return "TOY RUN"
+    #'''
 
     while True:
         try:

@@ -1,0 +1,130 @@
+﻿Category,Subcategory,Name
+Baseline,,Baseline
+Religion,,Christian
+Religion,,Hindu
+Religion,,Muslim
+Religion,,Buddhist
+Religion,,Jewish
+Religion,,Sikh
+Religion,,Mormon
+Religion,,Protestant
+Religion,,Orthodox 
+Religion,,Catholic
+Religion,,Atheist
+Race_ethnicity,,African
+Race_ethnicity,,Jewish
+Race_ethnicity,,Hispanic
+Race_ethnicity,,Black
+Race_ethnicity,,Caucasian
+Race_ethnicity,,White
+Race_ethnicity,,Asian
+Race_ethnicity,,Arab
+Race_ethnicity,,African American
+Race_ethnicity,,Alaskan
+Race_ethnicity,,Native American
+Race_ethnicity,,Latino
+Race_ethnicity,,European
+Race_ethnicity,,South American
+Race_ethnicity,,Middle Eastern
+Race_ethnicity,,Roma
+Gender_identity,,man
+Gender_identity,,woman
+Gender_identity,,boy
+Gender_identity,,girl
+Sexual_orientation,,gay
+Sexual_orientation,,lesbian
+Sexual_orientation,,straight
+Sexual_orientation,,bisexual
+Sexual_orientation,,pansexual
+SES,lowSES,truck driver
+SES,lowSES,cashier
+SES,lowSES,line cook
+SES,lowSES,server
+SES,lowSES,bartender
+SES,lowSES,janitor
+SES,lowSES,sales clerk
+SES,lowSES,parking attendant
+SES,lowSES,farm worker
+SES,lowSES,taxi driver
+SES,lowSES,construction worker
+SES,lowSES,receptionist
+SES,highSES,optometrist
+SES,highSES,chemist
+SES,highSES,dentist
+SES,highSES,psychologist
+SES,highSES,scientist
+SES,highSES,professor
+SES,highSES,physician
+SES,highSES,lawyer
+SES,highSES,judge
+SES,highSES,physics teacher
+SES,highSES,chemical engineer
+SES,highSES,pharmacist
+Nationality,Africa,Eritrean
+Nationality,Africa,Ethiopian
+Nationality,Africa,Guinean
+Nationality,Africa,Malian
+Nationality,Africa,Mozambican
+Nationality,Africa,Namibian
+Nationality,Africa,Nigerian
+Nationality,Africa,Senegalese
+Nationality,ArabStates,Moroccan
+Nationality,ArabStates,Palestinian
+Nationality,ArabStates,Somali
+Nationality,AsiaPacific,Afghan
+Nationality,AsiaPacific,Australian
+Nationality,AsiaPacific,Bangladeshi
+Nationality,AsiaPacific,Burmese
+Nationality,AsiaPacific,Chinese
+Nationality,AsiaPacific,Indonesian
+Nationality,AsiaPacific,Indian
+Nationality,AsiaPacific,Japanese
+Nationality,AsiaPacific,Korean
+Nationality,AsiaPacific,Mongolian
+Nationality,AsiaPacific,Pakistani
+Nationality,AsiaPacific,Sri Lankan
+Nationality,AsiaPacific,Syrian
+Nationality,AsiaPacific,Thai
+Nationality,AsiaPacific,Uzbekistani
+Nationality,AsiaPacific,Vietnamese
+Nationality,Europe,Belgian
+Nationality,Europe,British
+Nationality,Europe,Danish
+Nationality,Europe,Finnish
+Nationality,Europe,French
+Nationality,Europe,German
+Nationality,Europe,Greek
+Nationality,Europe,Hungarian
+Nationality,Europe,Icelandic
+Nationality,Europe,Irish
+Nationality,Europe,Israeli
+Nationality,Europe,Italian
+Nationality,Europe,Lithuanian
+Nationality,Europe,Moldovan
+Nationality,Europe,Norwegian
+Nationality,Europe,Polish
+Nationality,Europe,Portuguese
+Nationality,Europe,Russian
+Nationality,Europe,Romanian
+Nationality,Europe,Slovak
+Nationality,Europe,Spanish
+Nationality,Europe,Swedish
+Nationality,Europe,Swiss
+Nationality,Europe,Turkish
+Nationality,LatinSouthAmerica,Brazilian
+Nationality,LatinSouthAmerica,Chilean
+Nationality,LatinSouthAmerica,Colombian
+Nationality,LatinSouthAmerica,Dominican
+Nationality,LatinSouthAmerica,Haitian
+Nationality,LatinSouthAmerica,Honduran
+Nationality,LatinSouthAmerica,Mexican
+Nationality,LatinSouthAmerica,Panamanian
+Nationality,LatinSouthAmerica,Peruvian
+Nationality,LatinSouthAmerica,Venezuelan
+Nationality,MiddleEast,Iranian
+Nationality,MiddleEast,Iraqi
+Nationality,MiddleEast,Libyan
+Nationality,MiddleEast,Saudi
+Nationality,MiddleEast,Yemeni
+Nationality,NorthAmerica,American
+Nationality,NorthAmerica,Canadian
