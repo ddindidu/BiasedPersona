@@ -2,6 +2,9 @@
 # Source Dataset
 source/BBQ/
 
+# Result Dataset
+results/origin/
+results/toy
 
 
 # Byte-compiled / optimized / DLL files

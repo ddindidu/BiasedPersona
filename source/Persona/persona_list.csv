@@ -11,22 +11,22 @@ Religion,,Protestant
 Religion,,Orthodox 
 Religion,,Catholic
 Religion,,Atheist
-Race_ethnicity,,African
-Race_ethnicity,,Jewish
-Race_ethnicity,,Hispanic
-Race_ethnicity,,Black
-Race_ethnicity,,Caucasian
-Race_ethnicity,,White
-Race_ethnicity,,Asian
-Race_ethnicity,,Arab
-Race_ethnicity,,African American
-Race_ethnicity,,Alaskan
-Race_ethnicity,,Native American
-Race_ethnicity,,Latino
-Race_ethnicity,,European
-Race_ethnicity,,South American
-Race_ethnicity,,Middle Eastern
-Race_ethnicity,,Roma
+Race_ethnicity,African,African
+Race_ethnicity,Jewish,Jewish
+Race_ethnicity,Hispanic,Hispanic
+Race_ethnicity,Black,Black
+Race_ethnicity,Caucasian,Caucasian
+Race_ethnicity,White,White
+Race_ethnicity,Asian,Asian
+Race_ethnicity,Arab,Arab
+Race_ethnicity,African American,African American
+Race_ethnicity,Alaskan,Alaskan
+Race_ethnicity,Native American,Native American
+Race_ethnicity,Latino,Latino
+Race_ethnicity,European,European
+Race_ethnicity,South American,South American
+Race_ethnicity,Middle Eastern,Middle Eastern
+Race_ethnicity,Roma,Roma
 Gender_identity,,man
 Gender_identity,,woman
 Gender_identity,,boy

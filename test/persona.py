@@ -25,6 +25,15 @@ def call_persona_instruction(n = None):
     return inst
 
 
+def call_persona_df(source_dir, file_name, category):
+    file_path = os.path.join(source_dir, file_name)
+    persona_df = pd.read_csv(file_path, header=0)
+
+    selected_persona_df = persona_df[(persona_df['Category']==category)]
+
+    return selected_persona_df
+
+
 def call_persona_list(source_dir, file_name, category):
     #   PARAM
     #
@@ -42,9 +51,13 @@ def call_persona_list(source_dir, file_name, category):
     selected_persona_df = persona_df[(persona_df['Category']==category)]
 
     persona_list = selected_persona_df['Name'].tolist()
-    subcategory = selected_persona_df['Subcategory'].tolist()[0]
+    subcategory = selected_persona_df['Subcategory'].tolist()
+    subcategory = list(dict.fromkeys(subcategory))
+
+    '''
     if type(subcategory) is not str:
         subcategory = None
+    '''
 
     return {
         'Category': category,
