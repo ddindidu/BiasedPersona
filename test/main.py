@@ -54,6 +54,9 @@ def main(args):
 
     for p_no, p in enumerate(persona_list):
         for inst_no, inst in enumerate(persona_instruction):
+            if inst_no < args.instruction_start:
+                continue
+            print(p_no, p, inst_no, inst)
             timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")  # identifiable_token
             response_list = test(args, inst, persona_category, p, qa_dataset, g_model)
             save_json_file(args, persona_category, target_category, p, inst_no, response_list, timestamp)
@@ -65,7 +68,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--source_dir', type=str, default='./../source')
-    parser.add_argument('--output_dir', type=str, default='./../results')
+    parser.add_argument('--output_dir', type=str, default='./../results/origin')
     parser.add_argument('--persona_file', type=str, default='persona_list.csv')
 
     parser.add_argument('--model', type=str, default='gpt-3.5-turbo')
@@ -74,7 +77,8 @@ def get_args():
     parser.add_argument('--persona_category', type=str, default=None)
     parser.add_argument('--target_category', type=str, default=None)
 
-    parser.add_argument('--instruction_k', type=int, default=1)
+    parser.add_argument('--instruction_start', type=int, default=1)
+    parser.add_argument('--instruction_k', type=int, default=None)
     parser.add_argument('--qa_k', type=int, default=None)
 
     parser.add_argument('--toy', type=int, default=0)

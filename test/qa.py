@@ -2,9 +2,9 @@ import os
 import json
 
 
-def call_bbq(source_dir, category, n=None):
+def call_bbq(source_dir, target_category, n=None):
     dir_path = os.path.join(source_dir, 'BBQ/data')
-    file_name = "{}.jsonl".format(category)
+    file_name = "{}.jsonl".format(target_category)
     file_path = os.path.join(dir_path, file_name)
 
     data = []
