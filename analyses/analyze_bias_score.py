@@ -134,8 +134,8 @@ def main(args):
 
     file_list = glob.glob(os.path.join(result_dir, file_name))
 
-    persona_list.sort()
-    file_list.sort()
+    #persona_list.sort()
+    #file_list.sort()
 
     df_score_ambig = make_dataframe(persona_list, target_list)
     df_cnt_ambig = make_dataframe(persona_list, target_list)

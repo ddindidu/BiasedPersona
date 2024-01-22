@@ -52,6 +52,11 @@ def main(args):
 
     qa_dataset = call_bbq(args.source_dir, target_category, args.qa_k)
 
+    if args.toy == 1:
+        print(persona_instruction)
+        print(persona_list)
+        print(qa_dataset)
+
     for p_no, p in enumerate(persona_list):
         for inst_no, inst in enumerate(persona_instruction):
             if inst_no < args.instruction_start:
@@ -77,7 +82,7 @@ def get_args():
     parser.add_argument('--persona_category', type=str, default=None)
     parser.add_argument('--target_category', type=str, default=None)
 
-    parser.add_argument('--instruction_start', type=int, default=1)
+    parser.add_argument('--instruction_start', type=int, default=0)
     parser.add_argument('--instruction_k', type=int, default=None)
     parser.add_argument('--qa_k', type=int, default=None)
 

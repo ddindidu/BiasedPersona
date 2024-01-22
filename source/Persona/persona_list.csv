@@ -1,36 +1,36 @@
 ﻿Category,Subcategory,Name
 Baseline,,Baseline
 Religion,,Christian
-Religion,,Hindu
-Religion,,Muslim
-Religion,,Buddhist
-Religion,,Jewish
-Religion,,Sikh
-Religion,,Mormon
 Religion,,Protestant
-Religion,,Orthodox 
 Religion,,Catholic
+Religion,,Orthodox
+Religion,,Mormon
+Religion,,Jewish
+Religion,,Muslim
+Religion,,Hindu
+Religion,,Buddhist
+Religion,,Sikh
 Religion,,Atheist
 Race_ethnicity,African,African
-Race_ethnicity,Jewish,Jewish
-Race_ethnicity,Hispanic,Hispanic
+Race_ethnicity,African American,African American
 Race_ethnicity,Black,Black
 Race_ethnicity,Caucasian,Caucasian
 Race_ethnicity,White,White
-Race_ethnicity,Asian,Asian
-Race_ethnicity,Arab,Arab
-Race_ethnicity,African American,African American
+Race_ethnicity,European,European
+Race_ethnicity,Roma,Roma
 Race_ethnicity,Alaskan,Alaskan
 Race_ethnicity,Native American,Native American
+Race_ethnicity,Hispanic,Hispanic
 Race_ethnicity,Latino,Latino
-Race_ethnicity,European,European
 Race_ethnicity,South American,South American
+Race_ethnicity,Jewish,Jewish
+Race_ethnicity,Asian,Asian
+Race_ethnicity,Arab,Arab
 Race_ethnicity,Middle Eastern,Middle Eastern
-Race_ethnicity,Roma,Roma
-Gender_identity,,man
-Gender_identity,,woman
-Gender_identity,,boy
-Gender_identity,,girl
+Gender_identity,M,man
+Gender_identity,F,woman
+Gender_identity,M,boy
+Gender_identity,F,girl
 Sexual_orientation,,gay
 Sexual_orientation,,lesbian
 Sexual_orientation,,straight
@@ -128,3 +128,9 @@ Nationality,MiddleEast,Saudi
 Nationality,MiddleEast,Yemeni
 Nationality,NorthAmerica,American
 Nationality,NorthAmerica,Canadian
+Age,Old,elder
+Age,Old,man
+Age,Old,woman
+Age,nonOld,kid
+Age,nonOld,boy
+Age,nonOld,girl
