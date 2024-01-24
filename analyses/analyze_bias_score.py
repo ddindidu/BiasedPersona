@@ -273,7 +273,8 @@ def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
 
     file_name_overall = file_name_root+f_name_overall+'.csv'
     file_path_overall = os.path.join(score_dir, file_name_overall)
-    df_overall.to_csv(file_path_overall, index_label='Persona')
+    df_overall.set_index('Persona', inplace=True)
+    df_overall.to_csv(file_path_overall)
     print("FILE SAVED: {}".format(file_path_overall))
 
     file_name_ambig = file_name_root+f_name_ambig+'.csv'
