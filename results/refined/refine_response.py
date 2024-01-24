@@ -11,7 +11,7 @@ from utils import dir_checker
 def save_list2json(args, f_name, list):
     f_name = os.path.basename(f_name)
 
-    output_dir = os.path.join('./', args.persona_category)
+    output_dir = os.path.join(args.model, args.persona_category)
     dir_checker(output_dir)
     output_file = '{}_{}'.format('refined', f_name)
     output_path = os.path.join(output_dir, output_file)
@@ -43,7 +43,7 @@ def main(args, persona_category, target_category):
     persona_dict = call_persona_list(args.source_dir, 'persona_list.csv', persona_category)
     persona_list = persona_dict['persona_list']
 
-    result_dir = args.result_dir
+    result_dir = os.path.join(args.result_dir, args.model)
     result_dir = os.path.join(result_dir, persona_category)
     file_name = '*{}*.json'.format(target_category)
 
@@ -83,10 +83,13 @@ def get_args():
     parser.add_argument('--source_dir', type=str, default='./../../source')
     parser.add_argument('--result_dir', type=str, default='./../origin')
 
-    parser.add_argument('--persona_category', type=str, default='Religion')
-    parser.add_argument('--target_category', type=str, default='Religion')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
 
-    parser.add_argument('--instruction_k', type=int, default=5)
+    parser.add_argument('--persona_category', type=str, default='Baseline')
+    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
+
+    parser.add_argument('--instruction_k', type=int, default=1)
 
     return parser.parse_args()
 

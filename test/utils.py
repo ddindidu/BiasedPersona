@@ -15,7 +15,7 @@ def set_toy(args):
 
 def save_json_file(args, persona_category, target_category, persona, instruction_no, response_list, timestamp):
     save_dir = args.output_dir
-    save_dir = os.path.join(save_dir, persona_category)
+    save_dir = os.path.join(save_dir, args.model, persona_category)
     dir_checker(save_dir)
 
     save_file = 'p_{}_inst_{}_target_{}_{}.json'.format(persona, instruction_no, target_category, timestamp)
