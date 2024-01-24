@@ -13,10 +13,6 @@ from persona import call_persona_list
 from utils import dir_checker
 
 
-
-
-
-
 def make_dataframe(persona_list, target_list):
     persona_list.sort()
     target_list.sort()
@@ -25,8 +21,6 @@ def make_dataframe(persona_list, target_list):
         d[t] = [0]*len(persona_list)
     df = pd.DataFrame(data=d, index=persona_list)
     return df
-
-
 
 
 def get_target_list(args, target_category):
@@ -80,6 +74,8 @@ def main(args):
 
     #persona_list.sort()
     #file_list.sort()
+
+    save_file_name_dict  = {'overall': list(), 'ambig': list(), 'disambig': list()}
 
     for inst_no in range(args.instruction_k):
         df_bias_score_overall = pd.DataFrame()
@@ -215,25 +211,62 @@ def main(args):
         df_result_ambig = df_score_ambig/df_cnt_ambig
         df_result_disambig = df_score_disambig/df_cnt_disambig
 
-        score_dir = os.path.join(args.output_dir, args.model, persona_category)
-        dir_checker(score_dir)
+        save_file_name = save_file(args, inst_no, df_bias_score_overall, df_result_ambig, df_result_disambig)
+        save_file_name_dict = accumulate_save_file_name(save_file_name_dict, save_file_name)
+
+    # merge all dataset
+    if args.instruction_k > 1:
+        df_overall, df_ambig, df_disambig = average_scores(save_file_name_dict)
+        _ = save_file(args, None, df_overall, df_ambig, df_disambig)
+
+
+def average_scores(save_file_name_dict):
+    def average_df(file_list):
+        n = len(file_list)
+        total_df = pd.DataFrame()
+        for f_no, f_name in enumerate(file_list):
+            df_temp = pd.read_csv(f_name)
+            if f_no == 0:
+                total_df = df_temp
+            else:
+                total_df = total_df.add(other=df_temp, fill_value=0)
+        return total_df.div(n)
+    # overall score
+    f_list = save_file_name_dict['overall']
+    df_overall = average_df(f_list)
+    # ambig score
+    f_list = save_file_name_dict['ambig']
+    df_ambig = average_df(f_list)
+    # disambig score
+    f_list = save_file_name_dict['disambig']
+    df_disambig = average_df(f_list)
+    return df_overall, df_ambig, df_disambig
 
 
 
+def accumulate_save_file_name(dict, save_file_name):
+    for key in dict:
+        dict[key].append(save_file_name[key])
+    return dict
 
-
-
-def save_file_for_instruction(args, inst_no, df_overall, df_ambig, df_disambig):
-    persona_category, target_category = args.persona_category, args.target_level
+def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
+    persona_category, target_category = args.persona_category, args.target_category
     reward_penalty, counter_reward_penalty = args.rp, args.cc
 
     score_dir = os.path.join(args.output_dir, args.model, args.persona_category)
     dir_checker(score_dir)
 
+    file_name_root = ""
+
+    if inst_no is not None:
+        file_name_root += 'inst_{}_'.format(inst_no)
+    else:
+        file_name_root += 'aver_'
+
     if args.target_level == 'subcategory':
-        file_name_root = 'inst_{}_{}2{}'.format(inst_no, persona_category, target_category)
+        file_name_root += '{}2{}'.format(persona_category, target_category)
     else:  # 'name'
-        file_name_root = 'inst_{}_{}2{}_{}'.format(inst_no, persona_category, target_category, args.target_level)
+        file_name_root += '{}_{}2{}_{}'.format(persona_category, target_category, args.target_level)
     f_name_overall = '_overall_score'
     f_name_ambig = '_ambig_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
     f_name_disambig = '_disambig_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
@@ -241,13 +274,25 @@ def save_file_for_instruction(args, inst_no, df_overall, df_ambig, df_disambig):
     file_name_overall = file_name_root+f_name_overall+'.csv'
     file_path_overall = os.path.join(score_dir, file_name_overall)
     df_overall.to_csv(file_path_overall)
+    print("FILE SAVED: {}".format(file_path_overall))
 
-    file_path_ambig = os.path.join(score_dir, file_name_root+file_name_ambig+'.csv')
-    df_result_ambig.to_csv(file_path_ambig)
+    file_name_ambig = file_name_root+f_name_ambig+'.csv'
+    file_path_ambig = os.path.join(score_dir, file_name_ambig)
+    df_result_ambig.to_csv(file_path_ambig, index_label='Persona')
     print("FILE SAVED: {}".format(file_path_ambig))
 
-    file_path_disambig = os.path.join(score_dir, file_name_root+file_name_disambig+'.csv')
-    df_result_disambig.to_csv(file_path_disambig)
+    file_name_ambig = file_name_root+f_name_disambig+'.csv'
+    file_path_disambig = os.path.join(score_dir, file_name_ambig)
+    df_result_disambig.to_csv(file_path_disambig, index_label='Persona')
+    print("FILE SAVED: {}".format(file_path_disambig))
+
+    save_file_name = {
+        'overall': file_path_overall,
+        'ambig': file_path_ambig,
+        'disambig': file_path_disambig
+    }
+    return save_file_name
+
 
 
 def get_args():
