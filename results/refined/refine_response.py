@@ -48,6 +48,7 @@ def main(args, persona_category, target_category):
     file_name = '*{}*.json'.format(target_category)
 
     file_list = glob.glob(os.path.join(result_dir, file_name))
+    print(file_list)
 
     persona_list.sort()
     file_list.sort()
@@ -87,7 +88,7 @@ def get_args():
     parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--target_category', type=str, default='Religion')
 
     parser.add_argument('--instruction_k', type=int, default=1)
 
