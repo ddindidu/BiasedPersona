@@ -216,8 +216,8 @@ def main(args):
             df_origin_score = pd.DataFrame.from_dict([origin_score])
             df_bias_score_overall = pd.concat([df_bias_score_overall, df_origin_score], ignore_index=True, axis=0)
 
-        print(df_score_ambig)
-        print(df_score_ambig/df_cnt_ambig)
+        #print(df_score_ambig)
+        #print(df_score_ambig/df_cnt_ambig)
         df_result_ambig = df_score_ambig/df_cnt_ambig
         df_result_disambig = df_score_disambig/df_cnt_disambig
 
@@ -315,16 +315,16 @@ def get_args():
     parser.add_argument('--result_dir', type=str, default='./../results/refined')
     parser.add_argument('--output_dir', type=str, default='./Bias_Score')
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--instruction_k', type=int, default=5)
-    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--instruction_k', type=int, default=1)
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--instruction_k', type=int, default=5)
+    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--instruction_k', type=int, default=1)
 
-    parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='SES')
+    parser.add_argument('--persona_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
     parser.add_argument('--target_level', type=str, default='subcategory')
 
-    parser.add_argument('--rp', type=int, default=1)    # reward and penalty score  : {1, 2}
+    parser.add_argument('--rp', type=int, default=2)    # reward and penalty score  : {1, 2}
     parser.add_argument('--cc', type=int, default=1)    # counter-reward and counter-penalty score: {0, 1}
 
     return parser.parse_args()
@@ -332,15 +332,21 @@ def get_args():
 
 if __name__ == "__main__":
     args = get_args()
-    print(args)
+    #print(args)
 
     points = [(2, 1), (1, 1), (1, 0)]
+
+    fields = []
+    if args.model == 'gpt-3.5-turbo-0613':
+        fields = ['Age', 'Race_ethnicity', 'Religion', 'SES']
+    else:
+        fields = ['Race_ethnicity', 'Religion']
 
     for point in points:
         args.rp = point[0]
         args.cc = point[1]
-        for field in ['Age', 'Race_ethnicity', 'Religion', 'SES']:
-            args.persona_category = field
+        for field in fields:
+            args.target_category = field
             persona_categories = [args.persona_category]
             if args.model == 'gpt-3.5-turbo-0613':
                 persona_categories.append(args.target_category)
