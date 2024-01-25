@@ -1,2 +1,1 @@
-
-python main.py --persona_category 'Baseline' --target_category 'SES' --api_key 5
+python main.py --persona_category 'SES' --target_category 'SES' --api_key 5

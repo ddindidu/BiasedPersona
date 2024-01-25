@@ -1,2 +1,1 @@
-#python main.py --persona_category 'Baseline' --target_category 'Religion' --api_key 4
-python main.py --persona_category 'Baseline' --target_category 'Nationality' --api_key 4
+python main.py --persona_category 'Sexual_orientation' --target_category 'Sexual_orientation' --model='gpt-4-1106-preview' --api_key 4

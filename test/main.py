@@ -77,6 +77,7 @@ def get_args():
     parser.add_argument('--persona_file', type=str, default='persona_list.csv')
 
     parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
