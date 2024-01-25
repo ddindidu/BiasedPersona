@@ -1,1 +1,1 @@
-python main.py --persona_category 'Race_ethnicity' --target_category 'Race_ethnicity' --model 'gpt-4-1106-preview' --api_key 1
+python main.py --persona_category 'Age' --target_category 'Age' --model 'gpt-4-1106-preview' --api_key 0

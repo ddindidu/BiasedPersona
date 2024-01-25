@@ -5,7 +5,7 @@ import pandas as pd
 from scoring import scoring_overall, get_overall_acc
 from scoring import scoring_bbq, get_bs_ambig, get_bs_disambig
 from scoring import scoring_kbbq, get_diff_bias_ambig, get_diff_bias_disambig
-from scoring import scoring_ours_ambig, scoring_ours_disambig
+from scoring import scoring_ours_ambig, scoring_ours_disambig, dataframe_scoring_by_level
 
 import sys
 sys.path.append('./../test/')
@@ -14,8 +14,8 @@ from utils import dir_checker
 
 
 def make_dataframe(persona_list, target_list):
-    persona_list.sort()
-    target_list.sort()
+    #persona_list.sort()
+    #target_list.sort()
     d = dict()
     for t in target_list:
         d[t] = [0]*len(persona_list)
@@ -66,14 +66,17 @@ def main(args):
 
     file_list = glob.glob(os.path.join(result_dir, file_name))
 
+    print(persona_list)
     print(len(persona_list))
     print(len(file_list))
 
     reward_penalty = args.rp
     counter_reward_penalty = args.cc
+    instruction_k = args.instruction_k
 
-    #persona_list.sort()
-    #file_list.sort()
+    persona_list.sort()
+    target_list.sort()
+    file_list.sort()
 
     save_file_name_dict  = {'overall': list(), 'ambig': list(), 'disambig': list()}
 
@@ -85,8 +88,9 @@ def main(args):
         df_cnt_disambig = make_dataframe(persona_list, target_list)
 
         for p_no, persona in enumerate(persona_list):
-            file_idx = p_no * args.instruction_k + inst_no
+            file_idx = p_no * instruction_k + inst_no
             f_name = file_list[file_idx]
+            print(persona, inst_no, file_idx, f_name)
             with open(f_name, 'r') as f:
                 data = json.load(f)
                 f.close()
@@ -110,7 +114,7 @@ def main(args):
                 answer = item['label']
                 response = item['response']['refined']
 
-                unknown_option = 0
+                unknown_option = None
                 stereotyped_option, stereotyped_name, stereotyped_subcategory = None, None, None
                 anti_stereotyped_option, anti_stereotyped_name, anti_stereotyped_subcategory = None, None, None
 
@@ -172,6 +176,7 @@ def main(args):
                                                                            stereotyped_subcategory, anti_stereotyped_subcategory)
 
                 if context_condition == 'ambig':
+                    #'''
                     df_cnt_ambig, df_score_ambig = \
                         scoring_ours_ambig(df_cnt_ambig, df_score_ambig,
                                           persona, stereotyped_item, anti_stereotyped_item,
@@ -179,16 +184,21 @@ def main(args):
                                           unknown_option, stereotyped_option, anti_stereotyped_option,
                                           question_polarity, context_condition,
                                            reward_penalty, counter_reward_penalty)
+                    #'''
+                    #df_cnt_ambig, df_score_ambig = dataframe_scoring_by_level(df_cnt_ambig, df_score_ambig,
+                    #                                                          persona, stereotyped_item, anti_stereotyped_item,
+                    #                                                          answer, response, unknown_option, stereotyped_option, anti_stereotyped_option,
+                    #                                                          question_polarity, context_condition)
                 else:   # disambig
                     df_cnt_disambig, df_score_disambig = \
                         scoring_ours_disambig(df_cnt_disambig, df_score_disambig,
-                                                persona, stereotyped_item,
-                                                anti_stereotyped_item,
-                                                answer, response,
-                                                unknown_option, stereotyped_option, anti_stereotyped_option,
-                                                question_polarity, context_condition,
-                                              reward_penalty, counter_reward_penalty
-                                              )
+                                            persona, stereotyped_item,
+                                            anti_stereotyped_item,
+                                            answer, response,
+                                            unknown_option, stereotyped_option, anti_stereotyped_option,
+                                            question_polarity, context_condition,
+                                            reward_penalty, counter_reward_penalty
+                                            )
 
 
             acc_ambig, acc_disambig = get_overall_acc(n_overall)
@@ -284,15 +294,15 @@ def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
     df_result_ambig.to_csv(file_path_ambig)
     print("FILE SAVED: {}".format(file_path_ambig))
 
-    file_name_ambig = file_name_root+f_name_disambig+'.csv'
-    file_path_disambig = os.path.join(score_dir, file_name_ambig)
+    file_name_disambig = file_name_root+f_name_disambig+'.csv'
+    file_path_disambig = os.path.join(score_dir, file_name_disambig)
     df_result_disambig.to_csv(file_path_disambig)
     print("FILE SAVED: {}".format(file_path_disambig))
 
     save_file_name = {
         'overall': file_path_overall,
         'ambig': file_path_ambig,
-        'disambig': file_path_disambig
+        'disambig': file_path_disambig,
     }
     return save_file_name
 
@@ -306,14 +316,15 @@ def get_args():
     parser.add_argument('--output_dir', type=str, default='./Bias_Score')
 
     parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     parser.add_argument('--instruction_k', type=int, default=5)
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    #parser.add_argument('--instruction_k', type=int, default=1)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--target_category', type=str, default='SES')
     parser.add_argument('--target_level', type=str, default='subcategory')
 
-    parser.add_argument('--rp', type=int, default=2)    # reward and penalty score  : {1, 2}
+    parser.add_argument('--rp', type=int, default=1)    # reward and penalty score  : {1, 2}
     parser.add_argument('--cc', type=int, default=1)    # counter-reward and counter-penalty score: {0, 1}
 
     return parser.parse_args()
@@ -323,11 +334,19 @@ if __name__ == "__main__":
     args = get_args()
     print(args)
 
-    persona_categories = [args.persona_category]
-    if args.model == 'gpt-3.5-turbo-0613':
-        persona_categories.append(args.target_category)
-    #main(args)
-    for p in persona_categories:
-        args.persona_category = p
-        print(args)
-        main(args)
+    points = [(2, 1), (1, 1), (1, 0)]
+
+    for point in points:
+        args.rp = point[0]
+        args.cc = point[1]
+        for field in ['Age', 'Race_ethnicity', 'Religion', 'SES']:
+            args.persona_category = field
+            persona_categories = [args.persona_category]
+            if args.model == 'gpt-3.5-turbo-0613':
+                persona_categories.append(args.target_category)
+            #main(args)
+            for p in persona_categories:
+                args.persona_category = p
+                print(args)
+                main(args)
+
