@@ -26,7 +26,7 @@ def make_dataframe(persona_list, target_list):
 def get_target_list(args, target_category):
     if target_category in ['Religion']:
         target_list = call_persona_list(args.source_dir, 'persona_list.csv', target_category)['persona_list']
-    elif target_category in ['SES', 'Race_ethnicity']:
+    elif target_category in ['SES', 'Race_ethnicity', 'Age']:
         target_list = call_persona_list(args.source_dir, 'persona_list.csv', target_category)['Subcategory']
     elif target_category in ['Nationality']:
         if args.target_level == 'subcategory':
@@ -41,7 +41,7 @@ def get_target_level(target_category, target_level, stereotyped_name, anti_stere
     if target_category in ['Religion']:
         stereotyped_item = stereotyped_name
         anti_stereotyped_item = anti_stereotyped_name
-    elif target_category in ['SES', 'Race_ethnicity']:
+    elif target_category in ['SES', 'Race_ethnicity', 'Age']:
         stereotyped_item = stereotyped_subcategory
         anti_stereotyped_item = anti_stereotyped_subcategory
     elif target_category in ['Nationality']:
@@ -225,7 +225,8 @@ def average_scores(save_file_name_dict):
         n = len(file_list)
         total_df = pd.DataFrame()
         for f_no, f_name in enumerate(file_list):
-            df_temp = pd.read_csv(f_name)
+            df_temp = pd.read_csv(f_name, index_col=0)
+
             if f_no == 0:
                 total_df = df_temp
             else:
@@ -273,7 +274,8 @@ def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
 
     file_name_overall = file_name_root+f_name_overall+'.csv'
     file_path_overall = os.path.join(score_dir, file_name_overall)
-    df_overall.set_index('Persona', inplace=True)
+    if inst_no is not None:
+        df_overall.set_index('Persona', inplace=True)
     df_overall.to_csv(file_path_overall)
     print("FILE SAVED: {}".format(file_path_overall))
 
@@ -307,7 +309,7 @@ def get_args():
     parser.add_argument('--instruction_k', type=int, default=5)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--target_category', type=str, default='Age')
     parser.add_argument('--target_level', type=str, default='subcategory')
 
     parser.add_argument('--rp', type=int, default=2)    # reward and penalty score  : {1, 2}
