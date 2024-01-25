@@ -306,10 +306,11 @@ def get_args():
     parser.add_argument('--output_dir', type=str, default='./Bias_Score')
 
     parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     parser.add_argument('--instruction_k', type=int, default=5)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Age')
+    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
     parser.add_argument('--target_level', type=str, default='subcategory')
 
     parser.add_argument('--rp', type=int, default=2)    # reward and penalty score  : {1, 2}
@@ -322,8 +323,11 @@ if __name__ == "__main__":
     args = get_args()
     print(args)
 
+    persona_categories = [args.persona_category]
+    if args.model == 'gpt-3.5-turbo-0613':
+        persona_categories.append(args.target_category)
     #main(args)
-    for p in ['Baseline', args.target_category]:
+    for p in persona_categories:
         args.persona_category = p
         print(args)
         main(args)

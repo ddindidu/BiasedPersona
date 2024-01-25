@@ -128,9 +128,9 @@ Nationality,MiddleEast,Saudi
 Nationality,MiddleEast,Yemeni
 Nationality,NorthAmerica,American
 Nationality,NorthAmerica,Canadian
-Age,Old,elder
-Age,Old,man
-Age,Old,woman
+Age,old,elder
+Age,old,man
+Age,old,woman
 Age,nonOld,kid
 Age,nonOld,boy
 Age,nonOld,girl
