@@ -1,1 +1,2 @@
-python main.py --persona_category 'Baseline' --target_category 'Sexual_orientation' --model='gpt-4-1106-preview' --api_key 3
+python main.py --persona_category 'Baseline' --target_category 'SES' --model meta-llama/Llama-2-70b-chat-hf
+python main.py --persona_category 'Baseline' --target_category 'Sexual_orientation' --model meta-llama/Llama-2-70b-chat-hf

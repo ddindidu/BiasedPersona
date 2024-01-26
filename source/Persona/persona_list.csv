@@ -31,11 +31,11 @@ Gender_identity,M,man
 Gender_identity,F,woman
 Gender_identity,M,boy
 Gender_identity,F,girl
-Sexual_orientation,,gay
-Sexual_orientation,,lesbian
-Sexual_orientation,,straight
-Sexual_orientation,,bisexual
-Sexual_orientation,,pansexual
+Sexual_orientation,gay,gay
+Sexual_orientation,lesbian,lesbian
+Sexual_orientation,straight,straight
+Sexual_orientation,bisexual,bisexual
+Sexual_orientation,pansexual,pansexual
 SES,lowSES,truck driver
 SES,lowSES,cashier
 SES,lowSES,line cook

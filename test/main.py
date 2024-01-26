@@ -76,9 +76,13 @@ def get_args():
     parser.add_argument('--output_dir', type=str, default='./../results/origin')
     parser.add_argument('--persona_file', type=str, default='persona_list.csv')
 
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    #parser.add_argument('--model', type=str, default="meta-llama/Llama-2-70b-chat-hf")
     #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
+    parser.add_argument('--openai_api_key', type=str, default=None)
+    parser.add_argument('--deepinfra_api_key', type=str, default='R6otLBPsV1Zh1DEf0UDr9KliIHMp2uHc')
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')

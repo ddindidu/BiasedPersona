@@ -24,7 +24,7 @@ def make_dataframe(persona_list, target_list):
 
 
 def get_target_list(args, target_category):
-    if target_category in ['Religion']:
+    if target_category in ['Religion', 'Sexual_orientation']:
         target_list = call_persona_list(args.source_dir, 'persona_list.csv', target_category)['persona_list']
     elif target_category in ['SES', 'Race_ethnicity', 'Age']:
         target_list = call_persona_list(args.source_dir, 'persona_list.csv', target_category)['Subcategory']
@@ -38,7 +38,7 @@ def get_target_list(args, target_category):
 
 def get_target_level(target_category, target_level, stereotyped_name, anti_stereotyped_name, stereotyped_subcategory,
                      anti_stereotyped_subcategory):
-    if target_category in ['Religion']:
+    if target_category in ['Religion', 'Sexual_orientation']:
         stereotyped_item = stereotyped_name
         anti_stereotyped_item = anti_stereotyped_name
     elif target_category in ['SES', 'Race_ethnicity', 'Age']:
@@ -320,7 +320,7 @@ def get_args():
     parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     parser.add_argument('--instruction_k', type=int, default=1)
 
-    parser.add_argument('--persona_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')
     parser.add_argument('--target_level', type=str, default='subcategory')
 
@@ -338,21 +338,30 @@ if __name__ == "__main__":
 
     fields = []
     if args.model == 'gpt-3.5-turbo-0613':
-        fields = ['Age', 'Race_ethnicity', 'Religion', 'SES']
+        fields = ['Sexual_orientation', 'Age', 'Race_ethnicity', 'Religion',] #, 'SES']
     else:
-        fields = ['Race_ethnicity', 'Religion']
+        fields = ['Age', 'Race_ethnicity', 'Religion', 'Sexual_orientation'] #, 'SES']
 
     for point in points:
         args.rp = point[0]
         args.cc = point[1]
         for field in fields:
             args.target_category = field
-            persona_categories = [args.persona_category]
-            if args.model == 'gpt-3.5-turbo-0613':
-                persona_categories.append(args.target_category)
+            persona_categories = ['Baseline']
+            #if args.model == 'gpt-3.5-turbo-0613':
+            persona_categories.append(args.target_category)
             #main(args)
+
+
+
             for p in persona_categories:
                 args.persona_category = p
+
+                if (args.model == 'gpt-3.5-turbo-0613') and (args.target_category == 'Sexual_orientation'):
+                    args.instruction_k=1
+                elif args.model == 'gpt-3.5-turbo-0613':
+                    args.instruction_k=5
+
                 print(args)
                 main(args)
 
