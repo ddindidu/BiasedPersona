@@ -191,7 +191,7 @@ def main(args):
                     #                                                          question_polarity, context_condition)
                 else:   # disambig
                     df_cnt_disambig, df_score_disambig = \
-                        scoring_ours_disambig(df_cnt_disambig, df_score_disambig,
+                        scoring_ours_disambig(args, df_cnt_disambig, df_score_disambig,
                                             persona, stereotyped_item,
                                             anti_stereotyped_item,
                                             answer, response,
@@ -314,6 +314,7 @@ def get_args():
     parser.add_argument('--source_dir', type=str, default='./../source')
     parser.add_argument('--result_dir', type=str, default='./../results/refined')
     parser.add_argument('--output_dir', type=str, default='./Bias_Score')
+    parser.add_argument('--new_score_deno', type=int, default=0)
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--instruction_k', type=int, default=5)
@@ -338,9 +339,9 @@ if __name__ == "__main__":
 
     fields = []
     if args.model == 'gpt-3.5-turbo-0613':
-        fields = ['Sexual_orientation', 'Age', 'Race_ethnicity', 'Religion',] #, 'SES']
+        fields = ['Sexual_orientation', 'Age', 'Race_ethnicity', 'Religion', 'SES']
     else:
-        fields = ['Age', 'Race_ethnicity', 'Religion', 'Sexual_orientation'] #, 'SES']
+        fields = ['Age', 'Race_ethnicity', 'Religion', 'Sexual_orientation', 'SES']
 
     for point in points:
         args.rp = point[0]
@@ -356,11 +357,6 @@ if __name__ == "__main__":
 
             for p in persona_categories:
                 args.persona_category = p
-
-                if (args.model == 'gpt-3.5-turbo-0613') and (args.target_category == 'Sexual_orientation'):
-                    args.instruction_k=1
-                elif args.model == 'gpt-3.5-turbo-0613':
-                    args.instruction_k=5
 
                 print(args)
                 main(args)
