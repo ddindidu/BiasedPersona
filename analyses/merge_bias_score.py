@@ -122,14 +122,14 @@ def main(args):
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--result_dir', type=str, default='Bias_Score')
+    parser.add_argument('--result_dir', type=str, default='Bias_Score_newDeno')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
 
-    parser.add_argument('--category', type=str, default='SES')
+    parser.add_argument('--category', type=str, default='Age')
 
     parser.add_argument('--rp', type=int, default=2)
     parser.add_argument('--cc', type=int, default=1)
