@@ -91,6 +91,19 @@ def refine_column_names(df, context_condition):
     return df
 
 
+def drop_invalid_identity(df):
+    labels = ["Alaskan", "Orthodox", ]
+
+    persona = df.index
+    target = df.columns
+
+    for lab in labels:
+        if lab in persona:
+            df = df.drop(labels=lab, axis=0)
+        if lab in target:
+            df = df.drop(labels=lab, axis=1)
+    return df
+
 def main(args):
     category = args.category
     rp, cc = args.rp, args.cc
@@ -101,6 +114,10 @@ def main(args):
     df_overall = pd.concat([df_overall_base, df_overall_persona], axis=0)
     df_ambig = pd.concat([df_ambig_base, df_ambig_persona], axis=0)
     df_disambig = pd.concat([df_disambig_base, df_disambig_persona], axis=0)
+
+    df_overall = drop_invalid_identity(df_overall)
+    df_ambig = drop_invalid_identity(df_ambig)
+    df_disambig = drop_invalid_identity(df_disambig)
 
     df_ambig_calcul = calcul_bias_target_n_persona(df_ambig)
     df_disambig_calcul = calcul_bias_target_n_persona(df_disambig)
@@ -122,12 +139,12 @@ def main(args):
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--result_dir', type=str, default='Bias_Score')
+    parser.add_argument('--result_dir', type=str, default='Bias_Score_newDeno')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
 
     parser.add_argument('--category', type=str, default='Race_ethnicity')
 
