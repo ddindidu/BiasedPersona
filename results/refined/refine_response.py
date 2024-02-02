@@ -86,9 +86,9 @@ def get_args():
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
 
-    parser.add_argument('--persona_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')
 
     parser.add_argument('--instruction_k', type=int, default=1)
