@@ -72,7 +72,32 @@ def calcul_bias_target_n_persona(df):
 
     df['TB'] = target_bias_list
     df['PB'] = persona_bias_list
+
+    # TB0-TB_p
+    diff_tb = []
+    TB_baseline = df.at['Baseline', 'TB']
+    for idx, row in df.iterrows():
+        TB_p = row['TB']
+        diff = TB_p - TB_baseline
+        diff_tb.append(diff)
+    df['diff_TB'] = diff_tb
+
     print(df)
+    return df
+
+
+def calcul_overall_diff(df):
+    bs_a_base = df.at['Baseline', 'BS_a']
+    bs_d_base = df.at['Baseline', 'BS_d']
+
+    diff_bs_a, diff_bs_d = [], []
+    for idx, row in df.iterrows():
+        diff_bs_a_p = row['BS_a'] - bs_a_base
+        diff_bs_d_p = row['BS_d'] - bs_d_base
+        diff_bs_a.append(diff_bs_a_p)
+        diff_bs_d.append(diff_bs_d_p)
+    df['Diff_BS_a'] = diff_bs_a
+    df['Diff_BS_d'] = diff_bs_d
     return df
 
 
@@ -156,13 +181,19 @@ def main(args):
 
     df_overall, df_ambig, df_disambig = sort_persona_names(df_overall, df_ambig, df_disambig, category)
 
+    df_overall_calcul = calcul_overall_diff(df_overall)
+
     df_ambig_calcul = calcul_bias_target_n_persona(df_ambig)
     df_disambig_calcul = calcul_bias_target_n_persona(df_disambig)
+
+
+
+
 
     df_ambig_calcul = refine_column_names(df_ambig_calcul, 'ambig')
     df_disambig_calcul = refine_column_names(df_disambig_calcul, 'disambig')
 
-    df_merged = pd.concat([df_overall, df_ambig_calcul, df_disambig_calcul], axis=1)
+    df_merged = pd.concat([df_overall_calcul, df_ambig_calcul, df_disambig_calcul], axis=1)
 
     dir_save = os.path.join(args.save_dir, args.result_dir, args.model, args.category)
     dir_checker(dir_save)
@@ -180,9 +211,9 @@ def get_args():
     parser.add_argument('--result_dir', type=str, default='Bias_Score_newDeno')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
 
     parser.add_argument('--category', type=str, default='Sexual_orientation')
 
