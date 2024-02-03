@@ -313,13 +313,13 @@ def get_args():
 
     parser.add_argument('--source_dir', type=str, default='./../source')
     parser.add_argument('--result_dir', type=str, default='./../results/refined')
-    parser.add_argument('--output_dir', type=str, default='./Bias_Score')
-    parser.add_argument('--new_score_deno', type=int, default=0)
+    parser.add_argument('--output_dir', type=str, default='./Bias_Score_newDeno')
+    parser.add_argument('--new_score_deno', type=int, default=1)
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--instruction_k', type=int, default=5)
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=1)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     if args.model == 'gpt-3.5-turbo-0613' or args.model == 'gpt-4-1106-preview':
         fields = ['Sexual_orientation', 'Age', 'Race_ethnicity', 'Religion', 'SES']
     else:
-        fields = ['Age', 'Religion', 'Race_ethnicity', 'Sexual_orientation', 'SES']
+        fields = ['Age', 'Religion', 'Sexual_orientation'] #,'Race_ethnicity', 'SES']
 
     for point in points:
         args.rp = point[0]

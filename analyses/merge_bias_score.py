@@ -35,9 +35,7 @@ def call_dfs(args, persona, category, rp, cc):
 
         return df_overall, df_ambig, df_disambig
 
-
     df_overall_base, df_ambig_base, df_disambig_base = call_files(dir_baseline, overall_f, ambig_f, disambig_f)
-    #df_overall_persona, df_ambig_persona, df_disambig_persona = call_files(dir_category, overall_f, ambig_f, disambig_f)
 
     return df_overall_base, df_ambig_base, df_disambig_base
 
@@ -104,6 +102,43 @@ def drop_invalid_identity(df):
             df = df.drop(labels=lab, axis=1)
     return df
 
+
+def sort_persona_names(df_overall, df_amb, df_dis, category):
+    if category == 'Age':
+        sorter = ['boy', 'girl', 'kid', 'man', 'woman', 'elder']
+    elif category == 'Race_ethnicity':
+        sorter = ['African', 'African American', 'Black',
+                  'Caucasian', 'White', 'European', 'Roma',
+                  'Native American', 'South American', 'Hispanic', 'Latino',
+                  'Jewish',
+                  'Arab', 'Middle Eastern',
+                  'Asian']
+    elif category == 'Religion':
+        sorter = ['Atheist', 'Christian', 'Protestant', 'Catholic', 'Mormon', 'Jewish', 'Muslim', 'Sikh', 'Hindu', 'Buddhist']
+    elif category == 'SES':
+        sorter = ['chemical engineer', 'chemist', 'dentist', 'judge', 'lawyer', 'optometrist', 'pharmacist', 'physician', 'physics teacher', 'professor', 'psychologist', 'scientist',
+                  'bartender', 'cashier', 'construction worker', 'farm worker', 'janitor', 'line cook', 'parking attendant', 'receptionist', 'sales clerk', 'server', 'taxi driver', 'truck driver',]
+    elif category == 'Sexual_orientation':
+        sorter = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual']
+
+    row = ['Baseline']+sorter
+    column = sorter
+
+    # resort index
+    df_overall = df_overall.reindex(row)
+    df_amb = df_amb.reindex(row)
+    df_dis = df_dis.reindex(row)
+
+    # resort column
+    score_sorter = ['BS_a', 'BS_d', 'Diff_Bias_a', 'Diff_Bias_d', 'Acc_a', 'Acc_d']
+    df_overall = df_overall.reindex(score_sorter, axis=1)
+    if category in ['Race_ethnicity', 'Religion', 'Sexual_orientation']:
+        df_amb = df_amb.reindex(column, axis=1)
+        df_dis = df_dis.reindex(column, axis=1)
+
+    return df_overall, df_amb, df_dis
+
+
 def main(args):
     category = args.category
     rp, cc = args.rp, args.cc
@@ -118,6 +153,8 @@ def main(args):
     df_overall = drop_invalid_identity(df_overall)
     df_ambig = drop_invalid_identity(df_ambig)
     df_disambig = drop_invalid_identity(df_disambig)
+
+    df_overall, df_ambig, df_disambig = sort_persona_names(df_overall, df_ambig, df_disambig, category)
 
     df_ambig_calcul = calcul_bias_target_n_persona(df_ambig)
     df_disambig_calcul = calcul_bias_target_n_persona(df_disambig)
@@ -139,14 +176,15 @@ def main(args):
 def get_args():
     parser = argparse.ArgumentParser()
 
+    #parser.add_argument('--result_dir', type=str, default='Bias_Score')
     parser.add_argument('--result_dir', type=str, default='Bias_Score_newDeno')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
 
-    parser.add_argument('--category', type=str, default='Race_ethnicity')
+    parser.add_argument('--category', type=str, default='Sexual_orientation')
 
     parser.add_argument('--rp', type=int, default=2)
     parser.add_argument('--cc', type=int, default=1)
@@ -158,8 +196,12 @@ if __name__ == "__main__":
     #print(args)
 
     points = [(2,1), (1,1), (1,0)]
-    for point in points:
-        args.rp = point[0]
-        args.cc = point[1]
-        print(args)
-        main(args)
+    cats = ['Age', 'Religion', 'Sexual_orientation', 'Race_ethnicity', 'SES']
+
+    for cat in cats:
+        args.category = cat
+        for point in points:
+            args.rp = point[0]
+            args.cc = point[1]
+            print(args)
+            main(args)
