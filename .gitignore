@@ -8,6 +8,8 @@ source/BBQ/
 results/origin/
 results/toy
 
+# run command
+*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

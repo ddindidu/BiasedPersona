@@ -2,7 +2,7 @@ import os, datetime, argparse
 
 from persona import call_persona_list, call_persona_instruction
 from qa import call_bbq
-from generate import get_openai_client, generate
+from generate import get_generative_model, generate
 from utils import set_toy, save_json_file
 
 
@@ -37,7 +37,7 @@ def test(args, persona_instruction, persona_category, persona, qa_dataset, clien
 
 
 def main(args):
-    g_model = get_openai_client(args)
+    g_model = get_generative_model(args)
 
     if args.toy == 1:
         args = set_toy(args)
@@ -83,6 +83,7 @@ def get_args():
     parser.add_argument('--api_key', type=int, default=0)
     parser.add_argument('--openai_api_key', type=str, default=None)
     parser.add_argument('--deepinfra_api_key', type=str, default='R6otLBPsV1Zh1DEf0UDr9KliIHMp2uHc')
+    parser.add_argument('--google_ai_api_key', type=str, default="AIzaSyC86w89PjZpPhgkNGo3KQsb5c-b0awIJnQ")
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')

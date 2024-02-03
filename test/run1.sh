@@ -1,2 +1,1 @@
-python main.py --persona_category 'Baseline' --target_category 'Race_ethnicity' --model meta-llama/Llama-2-70b-chat-hf
-python main.py --persona_category 'Race_ethnicity' --target_category 'Race_ethnicity' --model meta-llama/Llama-2-70b-chat-hf
+python main.py --persona_category 'Baseline' --target_category 'Race_ethnicity' --model meta-llama/Llama-2-7b-chat-hf
