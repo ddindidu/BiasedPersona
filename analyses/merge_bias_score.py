@@ -18,26 +18,38 @@ def call_dfs(args, persona, category, rp, cc):
     if args.model != 'gpt-3.5-turbo-0613':
         overall_f = 'inst_0_*2{}_overall_score.csv'.format(category)
         ambig_f = 'inst_0_*2{}_ambig_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
+        ambig_abs_f = 'inst_0_*2{}_ambig_abs_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
         disambig_f = 'inst_0_*2{}_disambig_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
+        disambig_abs_f = 'inst_0_*2{}_disambig_abs_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
     else:
         overall_f = 'aver_*2{}_overall_score.csv'.format(category)
         ambig_f = 'aver_*2{}_ambig_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
+        ambig_abs_f = 'aver_*2{}_ambig_abs_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
         disambig_f = 'aver_*2{}_disambig_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
+        disambig_abs_f = 'aver_*2{}_disambig_abs_score_rp_{}_cc_{}.csv'.format(category, rp, cc)
 
-    def call_files(dir_path, overall_f, ambig_f, disambig_f):
+    def call_files(dir_path, overall_f, ambig_f, ambig_abs_f, disambig_f, disambig_abs_f):
         overall_file_path = glob.glob(os.path.join(dir_path, overall_f))[0]
         ambig_file_path = glob.glob(os.path.join(dir_path, ambig_f))[0]
+        ambig_abs_file_path = glob.glob(os.path.join(dir_path, ambig_abs_f))[0]
         disambig_file_path = glob.glob(os.path.join(dir_path, disambig_f))[0]
+        disambig_abs_file_path = glob.glob(os.path.join(dir_path, disambig_abs_f))[0]
 
         df_overall = pd.read_csv(overall_file_path, index_col=0)
         df_ambig = pd.read_csv(ambig_file_path, index_col=0)
+        df_ambig_abs = pd.read_csv(ambig_abs_file_path, index_col=0)
         df_disambig = pd.read_csv(disambig_file_path, index_col=0)
+        df_disambig_abs = pd.read_csv(disambig_abs_file_path, index_col=0)
 
-        return df_overall, df_ambig, df_disambig
+        return df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs
 
-    df_overall_base, df_ambig_base, df_disambig_base = call_files(dir_baseline, overall_f, ambig_f, disambig_f)
-
-    return df_overall_base, df_ambig_base, df_disambig_base
+    df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs = call_files(dir_baseline, overall_f, ambig_f, ambig_abs_f, disambig_f, disambig_abs_f)
+    df_overall.fillna(0, inplace=True)
+    df_ambig.fillna(0, inplace=True)
+    df_ambig_abs.fillna(0, inplace=True)
+    df_disambig.fillna(0, inplace=True)
+    df_disambig_abs.fillna(0, inplace=True)
+    return df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs
 
 
 def calcul_bias_target_n_persona(df):
@@ -128,7 +140,7 @@ def drop_invalid_identity(df):
     return df
 
 
-def sort_persona_names(df_overall, df_amb, df_dis, category):
+def sort_persona_names(df_overall, df_amb, df_amb_abs, df_dis, df_dis_abs, category):
     if category == 'Age':
         sorter = ['boy', 'girl', 'kid', 'man', 'woman', 'elder']
     elif category == 'Race_ethnicity':
@@ -152,48 +164,60 @@ def sort_persona_names(df_overall, df_amb, df_dis, category):
     # resort index
     df_overall = df_overall.reindex(row)
     df_amb = df_amb.reindex(row)
+    df_amb_abs = df_amb_abs.reindex(row)
     df_dis = df_dis.reindex(row)
+    df_dis_abs = df_dis_abs.reindex(row)
 
     # resort column
     score_sorter = ['BS_a', 'BS_d', 'Diff_Bias_a', 'Diff_Bias_d', 'Acc_a', 'Acc_d']
     df_overall = df_overall.reindex(score_sorter, axis=1)
     if category in ['Race_ethnicity', 'Religion', 'Sexual_orientation']:
         df_amb = df_amb.reindex(column, axis=1)
+        df_amb_abs = df_amb_abs.reindex(column, axis=1)
         df_dis = df_dis.reindex(column, axis=1)
+        df_dis_abs = df_dis_abs.reindex(column, axis=1)
 
-    return df_overall, df_amb, df_dis
+    return df_overall, df_amb, df_amb_abs, df_dis, df_dis_abs
 
 
 def main(args):
     category = args.category
     rp, cc = args.rp, args.cc
 
-    df_overall_base, df_ambig_base, df_disambig_base = call_dfs(args, 'Baseline', category, rp, cc)
-    df_overall_persona, df_ambig_persona, df_disambig_persona = call_dfs(args, category, category, rp, cc)
+    df_overall_base, df_ambig_base, df_ambig_abs_base, df_disambig_base, df_disambig_abs_base = call_dfs(args, 'Baseline', category, rp, cc)
+    df_overall_persona, df_ambig_persona, df_ambig_abs_persona, df_disambig_persona, df_disambig_abs_persona = call_dfs(args, category, category, rp, cc)
 
     df_overall = pd.concat([df_overall_base, df_overall_persona], axis=0)
     df_ambig = pd.concat([df_ambig_base, df_ambig_persona], axis=0)
+    df_ambig_abs = pd.concat([df_ambig_abs_base, df_ambig_abs_persona], axis=0)
     df_disambig = pd.concat([df_disambig_base, df_disambig_persona], axis=0)
+    df_disambig_abs = pd.concat([df_disambig_abs_base, df_disambig_abs_persona], axis=0)
 
     df_overall = drop_invalid_identity(df_overall)
     df_ambig = drop_invalid_identity(df_ambig)
+    df_ambig_abs = drop_invalid_identity(df_ambig_abs)
     df_disambig = drop_invalid_identity(df_disambig)
+    df_disambig_abs = drop_invalid_identity(df_disambig_abs)
 
-    df_overall, df_ambig, df_disambig = sort_persona_names(df_overall, df_ambig, df_disambig, category)
+    df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs = sort_persona_names(df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs, category)
 
     df_overall_calcul = calcul_overall_diff(df_overall)
 
     df_ambig_calcul = calcul_bias_target_n_persona(df_ambig)
+    df_ambig_abs_calcul = calcul_bias_target_n_persona(df_ambig_abs)
     df_disambig_calcul = calcul_bias_target_n_persona(df_disambig)
+    df_disambig_abs_calcul = calcul_bias_target_n_persona(df_disambig_abs)
 
 
 
 
 
-    df_ambig_calcul = refine_column_names(df_ambig_calcul, 'ambig')
-    df_disambig_calcul = refine_column_names(df_disambig_calcul, 'disambig')
+    df_ambig_calcul = refine_column_names(df_ambig_calcul, 'polarity_amb')
+    df_ambig_abs_calcul = refine_column_names(df_ambig_abs_calcul, 'amount_amb')
+    df_disambig_calcul = refine_column_names(df_disambig_calcul, 'polarity_dis')
+    df_disambig_abs_calcul = refine_column_names(df_disambig_abs_calcul, 'amount_dis')
 
-    df_merged = pd.concat([df_overall_calcul, df_ambig_calcul, df_disambig_calcul], axis=1)
+    df_merged = pd.concat([df_overall_calcul, df_ambig_calcul, df_ambig_abs_calcul, df_disambig_calcul, df_disambig_abs_calcul], axis=1)
 
     dir_save = os.path.join(args.save_dir, args.result_dir, args.model, args.category)
     dir_checker(dir_save)
@@ -207,8 +231,8 @@ def main(args):
 def get_args():
     parser = argparse.ArgumentParser()
 
-    #parser.add_argument('--result_dir', type=str, default='Bias_Score')
-    parser.add_argument('--result_dir', type=str, default='Bias_Score_newDeno')
+    parser.add_argument('--result_dir', type=str, default='Bias_Score')
+    #parser.add_argument('--result_dir', type=str, default='Bias_Score_notunknown')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
     parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
@@ -227,7 +251,7 @@ if __name__ == "__main__":
     #print(args)
 
     points = [(2,1), (1,1), (1,0)]
-    cats = ['Age', 'Religion', 'Sexual_orientation', 'Race_ethnicity', 'SES']
+    cats = ['Age', 'Religion', 'Sexual_orientation',  'SES','Race_ethnicity', ] # ]#
 
     for cat in cats:
         args.category = cat

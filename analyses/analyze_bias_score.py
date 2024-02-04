@@ -78,13 +78,16 @@ def main(args):
     target_list.sort()
     file_list.sort()
 
-    save_file_name_dict  = {'overall': list(), 'ambig': list(), 'disambig': list()}
+    save_file_name_dict  = {'overall': list(), 'ambig': list(), 'ambig_abs': list(),
+                            'disambig': list(), 'disambig_abs': list()}
 
     for inst_no in range(args.instruction_k):
         df_bias_score_overall = pd.DataFrame()
         df_score_ambig = make_dataframe(persona_list, target_list)
+        df_abs_score_ambig = make_dataframe(persona_list, target_list)
         df_cnt_ambig = make_dataframe(persona_list, target_list)
         df_score_disambig = make_dataframe(persona_list, target_list)
+        df_abs_score_disambig = make_dataframe(persona_list, target_list)
         df_cnt_disambig = make_dataframe(persona_list, target_list)
 
         for p_no, persona in enumerate(persona_list):
@@ -177,8 +180,8 @@ def main(args):
 
                 if context_condition == 'ambig':
                     #'''
-                    df_cnt_ambig, df_score_ambig = \
-                        scoring_ours_ambig(df_cnt_ambig, df_score_ambig,
+                    df_cnt_ambig, df_score_ambig, df_abs_score_ambig = \
+                        scoring_ours_ambig(args, df_cnt_ambig, df_score_ambig, df_abs_score_ambig,
                                           persona, stereotyped_item, anti_stereotyped_item,
                                           answer, response,
                                           unknown_option, stereotyped_option, anti_stereotyped_option,
@@ -190,10 +193,9 @@ def main(args):
                     #                                                          answer, response, unknown_option, stereotyped_option, anti_stereotyped_option,
                     #                                                          question_polarity, context_condition)
                 else:   # disambig
-                    df_cnt_disambig, df_score_disambig = \
-                        scoring_ours_disambig(args, df_cnt_disambig, df_score_disambig,
-                                            persona, stereotyped_item,
-                                            anti_stereotyped_item,
+                    df_cnt_disambig, df_score_disambig, df_abs_score_disambig = \
+                        scoring_ours_disambig(args, df_cnt_disambig, df_score_disambig, df_abs_score_disambig,
+                                            persona, stereotyped_item, anti_stereotyped_item,
                                             answer, response,
                                             unknown_option, stereotyped_option, anti_stereotyped_option,
                                             question_polarity, context_condition,
@@ -219,15 +221,20 @@ def main(args):
         #print(df_score_ambig)
         #print(df_score_ambig/df_cnt_ambig)
         df_result_ambig = df_score_ambig/df_cnt_ambig
+        df_result_abs_ambig = df_abs_score_ambig/df_cnt_ambig
         df_result_disambig = df_score_disambig/df_cnt_disambig
+        df_result_abs_disambig = df_abs_score_disambig/df_cnt_disambig
 
-        save_file_name = save_file(args, inst_no, df_bias_score_overall, df_result_ambig, df_result_disambig)
+        save_file_name = save_file(args, inst_no,
+                                   df_bias_score_overall,
+                                   df_result_ambig, df_result_abs_ambig,
+                                   df_result_disambig, df_result_abs_disambig)
         save_file_name_dict = accumulate_save_file_name(save_file_name_dict, save_file_name)
 
     # merge all dataset
     if args.instruction_k > 1:
-        df_overall, df_ambig, df_disambig = average_scores(save_file_name_dict)
-        _ = save_file(args, None, df_overall, df_ambig, df_disambig)
+        df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs = average_scores(save_file_name_dict)
+        _ = save_file(args, None, df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs)
 
 
 def average_scores(save_file_name_dict):
@@ -245,13 +252,22 @@ def average_scores(save_file_name_dict):
     # overall score
     f_list = save_file_name_dict['overall']
     df_overall = average_df(f_list)
+
     # ambig score
     f_list = save_file_name_dict['ambig']
     df_ambig = average_df(f_list)
+    # ambig absolute score
+    f_list = save_file_name_dict['ambig_abs']
+    df_ambig_abs = average_df(f_list)
+
     # disambig score
     f_list = save_file_name_dict['disambig']
     df_disambig = average_df(f_list)
-    return df_overall, df_ambig, df_disambig
+    # disambig absolute score
+    f_list = save_file_name_dict['disambig_abs']
+    df_disambig_abs = average_df(f_list)
+
+    return df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs
 
 
 
@@ -260,7 +276,8 @@ def accumulate_save_file_name(dict, save_file_name):
         dict[key].append(save_file_name[key])
     return dict
 
-def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
+
+def save_file(args, inst_no, df_overall, df_result_ambig, df_result_abs_ambig, df_result_disambig, df_result_abs_disambig):
     persona_category, target_category = args.persona_category, args.target_category
     reward_penalty, counter_reward_penalty = args.rp, args.cc
 
@@ -280,7 +297,9 @@ def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
         file_name_root += '{}_{}2{}_{}'.format(persona_category, target_category, args.target_level)
     f_name_overall = '_overall_score'
     f_name_ambig = '_ambig_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
+    f_name_abs_ambig = '_ambig_abs_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
     f_name_disambig = '_disambig_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
+    f_name_abs_disambig = '_disambig_abs_score_rp_{}_cc_{}'.format(reward_penalty, counter_reward_penalty)
 
     file_name_overall = file_name_root+f_name_overall+'.csv'
     file_path_overall = os.path.join(score_dir, file_name_overall)
@@ -294,15 +313,27 @@ def save_file(args, inst_no, df_overall, df_result_ambig, df_result_disambig):
     df_result_ambig.to_csv(file_path_ambig)
     print("FILE SAVED: {}".format(file_path_ambig))
 
+    file_name_abs_ambig = file_name_root + f_name_abs_ambig + '.csv'
+    file_path_abs_ambig = os.path.join(score_dir, file_name_abs_ambig)
+    df_result_abs_ambig.to_csv(file_path_abs_ambig)
+    print("FILE SAVED: {}".format(file_path_abs_ambig))
+
     file_name_disambig = file_name_root+f_name_disambig+'.csv'
     file_path_disambig = os.path.join(score_dir, file_name_disambig)
     df_result_disambig.to_csv(file_path_disambig)
     print("FILE SAVED: {}".format(file_path_disambig))
 
+    file_name_abs_disambig = file_name_root + f_name_abs_disambig + '.csv'
+    file_path_abs_disambig = os.path.join(score_dir, file_name_abs_disambig)
+    df_result_abs_disambig.to_csv(file_path_abs_disambig)
+    print("FILE SAVED: {}".format(file_path_abs_disambig))
+
     save_file_name = {
         'overall': file_path_overall,
         'ambig': file_path_ambig,
+        'ambig_abs': file_path_abs_ambig,
         'disambig': file_path_disambig,
+        'disambig_abs': file_path_abs_disambig,
     }
     return save_file_name
 
@@ -313,14 +344,14 @@ def get_args():
 
     parser.add_argument('--source_dir', type=str, default='./../source')
     parser.add_argument('--result_dir', type=str, default='./../results/refined')
-    parser.add_argument('--output_dir', type=str, default='./Bias_Score_newDeno')
-    parser.add_argument('--new_score_deno', type=int, default=1)
+    parser.add_argument('--output_dir', type=str, default='./Bias_Score')
+    parser.add_argument('--new_score_deno', type=int, default=0)
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    #parser.add_argument('--instruction_k', type=int, default=5)
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--instruction_k', type=int, default=5)
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
-    parser.add_argument('--instruction_k', type=int, default=1)
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    #parser.add_argument('--instruction_k', type=int, default=1)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')
@@ -339,10 +370,10 @@ if __name__ == "__main__":
     points = [(2, 1), (1, 1), (1, 0)]
 
     fields = []
-    if args.model == 'gpt-3.5-turbo-0613' or args.model == 'gpt-4-1106-preview':
+    if args.model in ['gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
         fields = ['Sexual_orientation', 'Age', 'Race_ethnicity', 'Religion', 'SES']
     else:
-        fields = ['Age', 'Religion', 'Sexual_orientation'] #,'Race_ethnicity', 'SES']
+        fields = ['Age', 'Religion', 'Sexual_orientation',] #'SES' #'Race_ethnicity']
 
     for point in points:
         args.rp = point[0]

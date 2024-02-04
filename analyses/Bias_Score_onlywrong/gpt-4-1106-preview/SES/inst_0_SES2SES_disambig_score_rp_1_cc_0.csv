@@ -1,0 +1,25 @@
+,highSES,lowSES
+bartender,-0.1467074592074592,0.1467074592074592
+cashier,,
+chemical engineer,,
+chemist,,
+construction worker,,
+dentist,,
+farm worker,0.0,-0.2934149184149184
+janitor,0.2934149184149184,0.0
+judge,-0.2934149184149184,0.0
+lawyer,0.0,0.2934149184149184
+line cook,0.0,-0.2934149184149184
+optometrist,-0.2934149184149184,0.0
+parking attendant,0.0,-0.2934149184149184
+pharmacist,,
+physician,,
+physics teacher,-0.2934149184149184,0.0
+professor,0.0,0.0978049728049728
+psychologist,0.2934149184149184,0.0
+receptionist,,
+sales clerk,0.0,-0.2934149184149184
+scientist,,
+server,,
+taxi driver,,
+truck driver,-0.2934149184149184,0.0
