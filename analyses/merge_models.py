@@ -50,15 +50,24 @@ def main(args, models):
         pol_base_disambig = baseline['TB_polarity_dis']
         amt_base_disambig = baseline['TB_amount_dis']
 
+        BS_ambig = baseline['BS_a']
+        BS_disambig = baseline['BS_d']
+
+        acc_ambig = baseline['Acc_a']
+        acc_disambig = baseline['Acc_d']
         #pol_base_disambig = df.at['Baseline', 'TB_polarity_dis']
 
         #TB_all_ambig, TB_all_disambig = aver_TB(df)
-        PB_all_ambig, PB_all_disambig = aver_PB(df)
+        #PB_all_ambig, PB_all_disambig = aver_PB(df)
 
         item = {
             "Model": model,
-            "TB_0_ambig": TB_base_ambig, "TB_all_ambig": TB_all_ambig, "PB_all_ambig": PB_all_ambig,
-            "TB_0_disambig": TB_base_disambig, "TB_all_disambig": TB_all_disambig, "PB_all_disambig": PB_all_disambig,
+            "Polarity_ambig": pol_base_ambig, "Polarity_disambig": pol_base_disambig,
+            "Amount_ambig": amt_base_ambig, "Amount_disambig": amt_base_disambig,
+            #"TB_0_ambig": TB_base_ambig, "TB_all_ambig": TB_all_ambig, "PB_all_ambig": PB_all_ambig,
+            #"TB_0_disambig": TB_base_disambig, "TB_all_disambig": TB_all_disambig, "PB_all_disambig": PB_all_disambig,
+            "BS_ambig":BS_ambig, "BS_disambig": BS_disambig,
+            "Acc_ambig": acc_ambig, "Acc_disambig": acc_disambig
         }
         df_item = pd.DataFrame().from_dict([item])
         total_df = pd.concat([total_df, df_item], ignore_index=True, axis=0)
@@ -88,8 +97,12 @@ if __name__ == "__main__":
     args = get_args()
     #print(args)
 
-    models = ['gpt-3.5-turbo-0613', 'gpt-4-1106-preview',
-              'meta-llama/Llama-2-70b-chat-hf']# 'meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf']
+    models = ['meta-llama/Llama-2-7b-chat-hf', #'meta-llama/Llama-2-13b-chat-hf']
+              'meta-llama/Llama-2-70b-chat-hf',
+              'gpt-3.5-turbo-0613',
+              'gpt-4-1106-preview',
+              ]
+
     points = [(2,1), (1,1), (1,0)]
     cats = ['Age', 'Religion', 'Sexual_orientation', 'Race_ethnicity', 'SES']
 
