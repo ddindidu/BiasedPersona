@@ -217,7 +217,7 @@ def main(args):
     df_disambig_calcul = refine_column_names(df_disambig_calcul, 'polarity_dis')
     df_disambig_abs_calcul = refine_column_names(df_disambig_abs_calcul, 'amount_dis')
 
-    df_merged = pd.concat([df_overall_calcul, df_ambig_calcul, df_ambig_abs_calcul, df_disambig_calcul, df_disambig_abs_calcul], axis=1)
+    df_merged = pd.concat([df_overall_calcul, df_ambig_calcul,df_disambig_calcul,  df_ambig_abs_calcul, df_disambig_abs_calcul], axis=1)
 
     dir_save = os.path.join(args.save_dir, args.result_dir, args.model, args.category)
     dir_checker(dir_save)
@@ -235,9 +235,9 @@ def get_args():
     #parser.add_argument('--result_dir', type=str, default='Bias_Score_notunknown')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
 
     parser.add_argument('--category', type=str, default='Sexual_orientation')
 

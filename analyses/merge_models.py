@@ -44,9 +44,15 @@ def main(args, models):
         df = pd.read_csv(file_path, index_col=0)
         #print(df)
 
-        TB_base_ambig = df.at['Baseline', 'TB_ambig']
-        TB_base_disambig = df.at['Baseline', 'TB_disambig']
-        TB_all_ambig, TB_all_disambig = aver_TB(df)
+        baseline = df.loc['Baseline', :]
+        pol_base_ambig = baseline['TB_polarity_amb']
+        amt_base_ambig = baseline['TB_amount_amb']
+        pol_base_disambig = baseline['TB_polarity_dis']
+        amt_base_disambig = baseline['TB_amount_dis']
+
+        #pol_base_disambig = df.at['Baseline', 'TB_polarity_dis']
+
+        #TB_all_ambig, TB_all_disambig = aver_TB(df)
         PB_all_ambig, PB_all_disambig = aver_PB(df)
 
         item = {
