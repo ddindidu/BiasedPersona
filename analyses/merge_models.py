@@ -97,7 +97,8 @@ if __name__ == "__main__":
     args = get_args()
     #print(args)
 
-    models = ['meta-llama/Llama-2-7b-chat-hf', #'meta-llama/Llama-2-13b-chat-hf']
+    models = ['meta-llama/Llama-2-7b-chat-hf',
+              'meta-llama/Llama-2-13b-chat-hf',
               'meta-llama/Llama-2-70b-chat-hf',
               'gpt-3.5-turbo-0613',
               'gpt-4-1106-preview',

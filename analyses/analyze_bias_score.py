@@ -350,7 +350,7 @@ def get_args():
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--instruction_k', type=int, default=5)
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=1)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
