@@ -82,10 +82,12 @@ def calcul_bias_target_n_persona(df):
             persona_bias += abs(p_t - b_t)
         persona_bias_list.append(persona_bias)
 
-    df['TB'] = target_bias_list
-    df['PB'] = persona_bias_list
+    target_n = len(df.columns)
+    df['TB'] = [x/target_n for x in target_bias_list]
+    df['PB'] = [x/target_n for x in persona_bias_list]
 
     # TB0-TB_p
+    '''
     diff_tb = []
     TB_baseline = df.at['Baseline', 'TB']
     for idx, row in df.iterrows():
@@ -93,7 +95,7 @@ def calcul_bias_target_n_persona(df):
         diff = TB_p - TB_baseline
         diff_tb.append(diff)
     df['diff_TB'] = diff_tb
-
+    '''
     print(df)
     return df
 
@@ -235,9 +237,9 @@ def get_args():
     #parser.add_argument('--result_dir', type=str, default='Bias_Score_notunknown')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
 
     parser.add_argument('--category', type=str, default='Sexual_orientation')
 

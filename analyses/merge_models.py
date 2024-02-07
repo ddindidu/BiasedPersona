@@ -29,10 +29,22 @@ def aver_TB(df):
     return TB_all_ambig/n, TB_all_disambig/n
 
 def aver_PB(df):
-    PB_all_ambig = df.loc[:, 'PB_ambig'].sum()
-    PB_all_disambig = df.loc[:, 'PB_disambig'].sum()
+    PB_all_ambig = df.loc[:, 'PB_polarity_amb'].sum()
+    PB_all_disambig = df.loc[:, 'PB_polarity_dis'].sum()
     n = len(df)-1
     return PB_all_ambig/n, PB_all_disambig/n
+
+
+def get_target_num(category):
+    if category == 'Age' or category == 'SES':
+        return 2
+    if category == 'Race_ethnicity':
+        return 15
+    if category == 'Religion':
+        return 10
+    if category =='Sexual_orientation':
+        return 5
+
 
 def main(args, models):
     category = args.category
@@ -43,6 +55,9 @@ def main(args, models):
         file_path = get_file_path(args, model, category, rp, cc)
         df = pd.read_csv(file_path, index_col=0)
         #print(df)
+
+        target_num = get_target_num(category)
+        persona_num = len(df)-1
 
         baseline = df.loc['Baseline', :]
         pol_base_ambig = baseline['TB_polarity_amb']
@@ -58,16 +73,18 @@ def main(args, models):
         #pol_base_disambig = df.at['Baseline', 'TB_polarity_dis']
 
         #TB_all_ambig, TB_all_disambig = aver_TB(df)
-        #PB_all_ambig, PB_all_disambig = aver_PB(df)
+        PB_all_ambig, PB_all_disambig = aver_PB(df)
 
         item = {
             "Model": model,
-            "Polarity_ambig": pol_base_ambig, "Polarity_disambig": pol_base_disambig,
-            "Amount_ambig": amt_base_ambig, "Amount_disambig": amt_base_disambig,
+            "Polarity_ambig": pol_base_ambig, "Amount_ambig": amt_base_ambig, "PB_ambig": PB_all_ambig,
+            "BS_ambig": BS_ambig,
+            "Acc_ambig": acc_ambig,
+            "Polarity_disambig": pol_base_disambig, "Amount_disambig": amt_base_disambig, "PB_disambig": PB_all_disambig,
             #"TB_0_ambig": TB_base_ambig, "TB_all_ambig": TB_all_ambig, "PB_all_ambig": PB_all_ambig,
             #"TB_0_disambig": TB_base_disambig, "TB_all_disambig": TB_all_disambig, "PB_all_disambig": PB_all_disambig,
-            "BS_ambig":BS_ambig, "BS_disambig": BS_disambig,
-            "Acc_ambig": acc_ambig, "Acc_disambig": acc_disambig
+            "BS_disambig": BS_disambig,
+            "Acc_disambig": acc_disambig
         }
         df_item = pd.DataFrame().from_dict([item])
         total_df = pd.concat([total_df, df_item], ignore_index=True, axis=0)
