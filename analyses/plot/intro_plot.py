@@ -1,61 +1,59 @@
 import os, argparse
+import networkx as nx
+from pyvis.network import Network
 
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import colormaps
 
-def result1(args, categories):
-    Xs, Ys, pol, amt = [], [], [], []
-
-    for y, zipped_info in enumerate(zip(categories, args.target_num)):
-        cat, targ_n = zipped_info
-        file_path = os.path.join(args.result_dir, cat, args.result_file)
-        df = pd.read_csv(file_path)
-
-        Xs.append(range(1, 6))
-        Ys += 5 * [5-y]
-        pol.extend(df['Polarity_ambig'].tolist())
-        amt.extend((df['Amount_ambig']**2*5000).tolist())
-
-    fig, ax = plt.subplots()
-    #ax = fig.add_subplot()
-    plt.scatter(Xs, Ys, c=pol, cmap='Reds', s=amt, edgecolors='black')
 
 
-    plt.xlabel('Models')
-    plt.show()
-
-
-def result2(args, category):
+def draw_network(args, category):
     print(os.getcwd())
     file_path = os.path.join(args.persona_result_dir, category, 'merged_total_rp_2_cc_1.csv')
     assert os.path.exists(file_path), "NO FILE DIR"
 
     df = pd.read_csv(file_path, index_col=0)
-    persona = df.index.tolist()
-    persona = ['.', '^', '^', '^', '1', '1', 'x']
-    TB = df['TB_polarity_amb'].tolist()
-    TB_AMT = (df['TB_amount_amb']*50).tolist()
-    PB = df['PB_polarity_amb'].tolist()
-    BS = df['BS_a'].tolist()
+    G = nx.MultiDiGraph()
 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    # baseline
-    ax.scatter(BS[:1], TB[:1], PB[:1], marker='o', s=TB_AMT[:1], label='baseline')
-    ax.scatter(BS[1:4], TB[1:4], PB[1:4], marker='^',s=TB_AMT[1:4],  label='non old')
-    ax.scatter(BS[4:6], TB[4:6], PB[4:6], marker='1', s=TB_AMT[4:6], label='middle-aged')
-    ax.scatter(BS[6:], TB[6:], PB[6:], marker='x', s=TB_AMT[6:], label='old')
+    def get_color(v):
+        if v < 0:
+            return 'red'
+        elif v == 0:
+            return 'black'
+        else:
+            return 'blue'
 
-    ax.set_xlabel('BS')
-    ax.set_ylabel('TB')
-    ax.set_zlabel('PB')
+    G.add_edge('Baseline', 'Non Old', weight = df.at['Baseline', 'nonOld_polarity_amb'])
+    G.add_edge('Baseline', 'Old', weight=df.at['Baseline', 'old_polarity_amb'])
+    G.add_edge('Non Old', 'Non Old', weight=df.at['kid', 'nonOld_polarity_amb'])
+    G.add_edge('Non Old', 'Old', weight=df.at['kid', 'old_polarity_amb'])
+    G.add_edge('Old', 'Non Old', weight=df.at['elder', 'nonOld_polarity_amb'])
+    G.add_edge('Old', 'Old', weight=df.at['elder', 'old_polarity_amb'])
 
+    weights = nx.get_edge_attributes(G, 'weight').values()
+
+    #colors = ['r' if w < 0 else 'b' for w in weights]
+    weights = [abs(w)**2*100 for w in weights]
+
+    '''
+    nx.draw(G,
+            edge_color = colors,
+            width=list(weights),
+            with_labels=True)
+    '''
+    nt = Network(directed=True)
+    nt.from_nx(G)
+    nt.set_edge_smooth('dynamic')
+
+    for edge in nt.get_edges():
+        print(edge)
+        edge['color'] = get_color(edge['width'])
+        edge['width'] = edge['width']**2*50
+
+    nt.show('intro.html')
     plt.show()
-
-
-
 
 
 def main(args):
@@ -64,8 +62,7 @@ def main(args):
 
     df = pd.read_csv(file_path)
 
-    result1(args, args.categories)
-    result2(args, args.category)
+    draw_network(args, category)
 
 
 def get_args():
