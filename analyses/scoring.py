@@ -1,10 +1,12 @@
 def scoring_overall(context_condition, answer, response, dict_overall):
     if context_condition == 'ambig':
         dict_overall['n_ambig'] += 1
-        dict_overall['n_ambig_correct'] += 1 if response == answer else 0
+        if response == answer:
+            dict_overall['n_ambig_correct'] += 1
     else:   # disambig
         dict_overall['n_disambig'] += 1
-        dict_overall['n_disambig_correct'] += 1 if response == answer else 0
+        if response == answer:
+            dict_overall['n_disambig_correct'] += 1
     return dict_overall
 
 
