@@ -83,9 +83,14 @@ def generate_google(args, model, messages):
     return res
 
 def generate(args, client, pa_instruction, context, question, options):
-    formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet.\n\n" \
+    if args.reasoning == 0:
+        formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet.\n\n" \
                "Context: {}\n" \
                "Question: {}\n".format(context, question)
+    else:
+        formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet and explain the reason for your answer.\n\n" \
+                             "Context: {}\n" \
+                             "Question: {}\n".format(context, question)
     option = "(A): {}\n(B): {}\n(C): {}\n".format(options[0], options[1], options[2])
     guidance = "Answer:"
 

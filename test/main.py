@@ -49,6 +49,13 @@ def main(args):
 
     persona_dict = call_persona_list(args.source_dir, args.persona_file, persona_category)
     persona_list = persona_dict['persona_list']
+    if args.reasoning == 1:
+        if args.persona_category == 'Age':
+            persona_list = ['kid', 'elder']
+        if args.persona_category == 'Race_ethnicity':
+            persona_list = ['Caucasian', 'White', 'Black', 'Arab', 'Asian']
+        if args.persona_category == 'Religion':
+            persona_list = ['Christian', 'Protestant', 'Hindu', 'Muslim', 'Buddhist']
 
     qa_dataset = call_bbq(args.source_dir, target_category, args.qa_k)
 
@@ -73,11 +80,13 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--source_dir', type=str, default='./../source')
-    parser.add_argument('--output_dir', type=str, default='./../results/origin')
+    parser.add_argument('--output_dir', type=str, default='./../results/reason/origin')
     parser.add_argument('--persona_file', type=str, default='persona_list.csv')
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--reasoning', type=int, default=1)
+
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     #parser.add_argument('--model', type=str, default="meta-llama/Llama-2-70b-chat-hf")
     #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
@@ -86,7 +95,7 @@ def get_args():
     parser.add_argument('--google_ai_api_key', type=str, default="AIzaSyC86w89PjZpPhgkNGo3KQsb5c-b0awIJnQ")
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Race_ethnicity')
+    parser.add_argument('--target_category', type=str, default='Age')
 
     parser.add_argument('--instruction_start', type=int, default=0)
     parser.add_argument('--instruction_k', type=int, default=1)
