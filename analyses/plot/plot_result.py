@@ -11,7 +11,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
 
-def result1(args):
+def result1_main_heatmap(args):
     file_tb = 'target_bias_{}_rp_{}_cc_{}.csv'
     file_bamt = 'bias_amount_{}_rp_{}_cc_{}.csv'
     file_pb = 'persona_bias_{}_rp_{}_cc_{}.csv'
@@ -44,13 +44,12 @@ def result1(args):
 
 
         if context == 'ambig':
-            sns.heatmap(df, annot=df.round(2), annot_kws={"fontsize": 'large'}, ax=location, cmap=colormap, cbar=False, vmin=vmin, vmax=vmax, xticklabels=[])
+            sns.heatmap(df, annot=df.round(2), annot_kws={"fontsize": 'x-large'}, ax=location, cmap=colormap, cbar=False, vmin=vmin, vmax=vmax, xticklabels=[])
         else:
-            sns.heatmap(df, annot=df.round(2), annot_kws={"fontsize": 'large'}, ax=location, cmap=colormap, cbar=False, vmin=vmin, vmax=vmax)
+            sns.heatmap(df, annot=df.round(2), annot_kws={"fontsize": 'x-large'}, ax=location, cmap=colormap, cbar=False, vmin=vmin, vmax=vmax)
             #location.set_xticklabels(ax.get_xticklabels(), rotation=30)
         #sns.heatmap(df_ambig, annot=df_ambig.round(2), cbar=False, ax=axs[0], cmap=colormap, xticklabels = [], vmin=vmin, vmax=vmax)
         #sns.heatmap(df_disambig, annot=df_disambig.round(2), cbar=False, ax=axs[1], cmap=colormap, vmin=vmin, vmax=vmax)
-
 
 
         #for ax in axs[:2]:
@@ -63,30 +62,29 @@ def result1(args):
         #return fig, axs
 
 
-    fig, ax = plt.subplots(nrows=2, ncols=4, figsize=(15, 5))
+    fig, ax = plt.subplots(nrows=2, ncols=4, figsize=(15, 7))
 
 
-    draw_heatmap(tb_amb, 'ambig', ax[0,0], args.cmap_tb); ax[0,0].set_title('TB_s', size='xx-large')
+    draw_heatmap(tb_amb, 'ambig', ax[0,0], args.cmap_tb); ax[0,0].set_title('Target Bias', size='xx-large')
     draw_heatmap(tb_dis, 'disambig', ax[1, 0], args.cmap_tb)
-    draw_heatmap(bamt_amb, 'ambig', ax[0, 1],  args.cmap_bamt); ax[0,1].set_title('BAmt', size='xx-large')
+    draw_heatmap(bamt_amb, 'ambig', ax[0, 1],  args.cmap_bamt); ax[0,1].set_title('Bias Amount', size='xx-large')
     draw_heatmap(bamt_dis, 'disambig', ax[1, 1], args.cmap_bamt)
-    draw_heatmap(pb_amb, 'ambig', ax[0, 2], args.cmap_pb); ax[0,2].set_title('PB', size='xx-large')
+    draw_heatmap(pb_amb, 'ambig', ax[0, 2], args.cmap_pb); ax[0,2].set_title('Persona Bias', size='xx-large')
     draw_heatmap(pb_dis, 'disambig', ax[1, 2], args.cmap_pb)
-    draw_heatmap(bs_amb, 'ambig', ax[0,3], args.cmap_bs, True); ax[0,3].set_title('BS', size='xx-large');
+    draw_heatmap(bs_amb, 'ambig', ax[0,3], args.cmap_bs, True); ax[0,3].set_title('Bias Score', size='xx-large');
     draw_heatmap(bs_dis, 'disambig', ax[1, 3], args.cmap_bs, True)
 
-    #plt.xticks(rotation=30)
-    #plt.show()
+    ax[0,0].set_ylabel("Ambiguous", fontsize='xx-large')
+    #ax[0,0].spines['left'].set_position(('outward', 20))
+    ax[1, 0].set_ylabel("Disambiguated", fontsize='xx-large')
+    #ax[1, 0].spines['left'].set_position(('outward', 20))
+    #plt.subplots_adjust(left=0.09, bottom=0.12)
 
-    #plt.xlabel("Domains")
-    #plt.ylabel("Models")
-    #plt.setp(ax, xtickslabels=['a', 'a', 'a', 'a'])
+
+    #fig.supxlabel('Domains', size='xx-large')
+    #fig.supylabel('Models', size='xx-large')
+
     fig.tight_layout()
-    plt.subplots_adjust(left=0.09, bottom=0.12)
-
-
-    fig.supxlabel('Domains', size='xx-large')
-    fig.supylabel('Models', size='xx-large')
 
     plt.savefig(os.path.join(args.save_dir, 'result_tables_each.pdf'), dpi=200)
 
@@ -826,7 +824,7 @@ if __name__ == "__main__":
 
     #collect_tables(args)
     #main(args)
-    #result1(args)
+    result1_main_heatmap(args)
     #result2(args)
     #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
     #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
@@ -837,4 +835,4 @@ if __name__ == "__main__":
     #result4_scatterplot(args)
     #result5_knn(args)
 
-    result6_barplot_with_line(args)
+    #result6_barplot_with_line(args)
