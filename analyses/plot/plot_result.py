@@ -62,7 +62,7 @@ def result1_main_heatmap(args):
         #return fig, axs
 
 
-    fig, ax = plt.subplots(nrows=2, ncols=4, figsize=(15, 7))
+    fig, ax = plt.subplots(nrows=2, ncols=4, figsize=(15, 5))
 
 
     draw_heatmap(tb_amb, 'ambig', ax[0,0], args.cmap_tb); ax[0,0].set_title('Target Bias', size='xx-large')
@@ -106,121 +106,230 @@ def result2(args):
             targets = ['straight', 'gay', 'lesbian', 'bisexual', 'pansexual']
         return targets
 
+    def get_min_max(category, context, metric):
+        if category == "Age":
+            if context == "amb":
+                if metric == "tbti":
+                    return -11, 19
+                if metric == "tb":
+                    return 0, 16
+                if metric == 'bamt':
+                    return 0, 140
+                if metric == 'pb':
+                    return 0, 26
+            else:
+                if metric == "tbti":
+                    return -1, 7
+                if metric == "tb":
+                    return 0, 7
+                if metric == 'bamt':
+                    return 0, 62
+                if metric == 'pb':
+                    return 0, 5
+        if category == "Race_ethnicity":
+            if context == "amb":
+                if metric == "tbti":
+                    return -27, 46
+                if metric == "tb":
+                    return 0, 11
+                if metric == 'bamt':
+                    return 0, 100
+                if metric == 'pb':
+                    return 0, 10
+            else:
+                if metric == "tbti":
+                    return -18, 29
+                if metric == "tb":
+                    return 0, 6
+                if metric == 'bamt':
+                    return 0, 48
+                if metric == 'pb':
+                    return 0, 8
+        if category == "Religion":
+            if context == "amb":
+                if metric == "tbti":
+                    return -38, 66
+                if metric == "tb":
+                    return 0, 20
+                if metric == 'bamt':
+                    return 0, 105
+                if metric == 'pb':
+                    return 0, 15
+            else:
+                if metric == "tbti":
+                    return -23, 21
+                if metric == "tb":
+                    return 0, 8
+                if metric == 'bamt':
+                    return 0, 51
+                if metric == 'pb':
+                    return 0, 13
+        if category == "SES":
+            if context == "amb":
+                if metric == "tbti":
+                    return -32, 38
+                if metric == "tb":
+                    return 0, 35
+                if metric == 'bamt':
+                    return 0, 132
+                if metric == 'pb':
+                    return 0, 13
+            else:
+                if metric == "tbti":
+                    return -4, 6
+                if metric == "tb":
+                    return 0, 5
+                if metric == 'bamt':
+                    return 0, 53
+                if metric == 'pb':
+                    return 0, 5
+        if category == "Sexual_orientation":
+            if context == "amb":
+                if metric == "tbti":
+                    return -19, 34
+                if metric == "tb":
+                    return 0, 13
+                if metric == 'bamt':
+                    return 0, 89
+                if metric == 'pb':
+                    return 0, 16
+            else:
+                if metric == "tbti":
+                    return -15, 15
+                if metric == "tb":
+                    return 0, 8
+                if metric == 'bamt':
+                    return 0, 47
+                if metric == 'pb':
+                    return 0, 9
+
+    dir = args.result2_dir
+    model = args.model
+
     for cat in args.categories:
-        dir = args.result2_dir
+
         f_name = args.file_name_2.format(args.rp, args.cc)
 
-        file_path = os.path.join(dir, args.model_2, cat, f_name)
+        file_path = os.path.join(dir, model, cat, f_name)
 
         df = pd.read_csv(file_path, index_col=0)
 
         targets = get_target_list(cat)
 
-        context = 'amb'
-        scores = ['polarity', 'amount']
+        for context in ['amb', 'dis']:
+            scores = ['polarity', 'amount']
 
-        tb_ti = df[['{}_{}_{}'.format(t, scores[0], context) for t in targets]]
-        bamt_ti = df[['{}_{}_{}'.format(t, scores[1], context) for t in targets]]
-        tb = df[['TB_{}_{}'.format(scores[0], context)]]
-        pb = df[['PB_{}_{}'.format(scores[0], context)]]
-        bamt = df[['TB_{}_{}'.format(scores[1], context)]]
-        bs = df[['BS_{}'.format('a')]]
+            tb_ti = df[['{}_{}_{}'.format(t, scores[0], context) for t in targets]]
+            bamt_ti = df[['{}_{}_{}'.format(t, scores[1], context) for t in targets]]
+            tb = df[['TB_{}_{}'.format(scores[0], context)]]
+            pb = df[['PB_{}_{}'.format(scores[0], context)]]
+            bamt = df[['TB_{}_{}'.format(scores[1], context)]]
+            bs = df[['BS_{}'.format('a')]]
 
-        df_figure = pd.concat([tb_ti,pb, bs], axis=1)*100 #  tb,  bamt_ti, bamt
-
-
-
-        n_target = len(targets)
-        n_persona = len(df_figure)
-        if cat != 'SES':
-            fig, ax = plt.subplots(figsize=((n_target)/2+1, (n_persona)/3+1))
-        else:
-            fig, ax = plt.subplots(figsize=((n_target)/2+3, (n_persona)/3+1))
-        xticks = targets; xticks.extend(["PB_s", "BS"])
-
-        # tb_ti
-        start = 0; end = n_target
-        data_tb_ti = df_figure.copy()
-        data_tb_ti.iloc[:, end:] = float('nan')
-
-        vmin = np.nanmin(data_tb_ti.values); vmax = np.nanmax(data_tb_ti.values)
-        print(vmin, vmax)
-        '''
-        absmax = max(abs(vmin), vmax)
-        vmin = -absmax; vmax = absmax
-        print(vmin, vmax)
-        '''
-        ax = sns.heatmap(data_tb_ti, annot=data_tb_ti.round(0), #annot_kws={"fontsize": 'small'},
-                         cmap=args.cmap_tb_i, cbar=False, center=0,
-                         xticklabels=xticks,
-                         )
-                         #vmin=vmin, vmax=vmax)
-
-        '''
-        start = end; end = end+1
-        data_tb = df_figure.copy()
-        data_tb.iloc[:, :start] = float('nan')
-        data_tb.iloc[:, end:] = float('nan')
-        sns.heatmap(data_tb, annot=data_tb.round(2), cmap=args.cmap_tb, cbar=False)
-        '''
-
-        start = end; end = end+1
-        data_pb = df_figure.copy()
-        data_pb.iloc[:, :start] = float('nan')
-        data_pb.iloc[:, end:] = float('nan')
-        sns.heatmap(data_pb, annot=data_pb.round(0),
-                    #cmap=matplotlib.colors.ListedColormap(['white']), cbar=False,
-                    cmap=args.cmap_pb, cbar=False,
-                    xticklabels=xticks)
-        '''
-        start = end; end = end+n_target
-        data_bamt_ti = df_figure.copy()
-        data_bamt_ti.iloc[:, :start] = float('nan')
-        data_bamt_ti.iloc[:, end:] = float('nan')
-        sns.heatmap(data_bamt_ti, annot=data_bamt_ti.round(3), cmap = args.cmap_bamt, cbar=False)
-        
-
-        start = end; end = end+1
-        data_bamt = df_figure.copy()
-        data_bamt.iloc[:, :start] = float('nan')
-        data_bamt.iloc[:, end:] = float('nan')
-        sns.heatmap(data_bamt, annot=data_bamt.round(3), cmap = args.cmap_bamt, cbar=False)
-        '''
-
-        start = end; end = end + 1
-        data_bs = df_figure.copy()
-        data_bs.iloc[:, :start] = float('nan')
-        data_bs.iloc[:, end:] = float('nan')
-        sns.heatmap(data_bs, annot=data_bs.round(0),
-                    cmap=args.cmap_bs, cbar=False, center=0,
-                    xticklabels=xticks)
+            df_figure = pd.concat([tb_ti, tb, bamt, pb], axis=1)*100 #  tb,  bamt_ti, bamt
+            print(df_figure)
 
 
-        plt.tick_params(axis='both', which='major', labelbottom = False, bottom=False, top = False, labeltop=True, rotation=10)
-        plt.xticks(rotation=90)
-        plt.yticks(rotation=0)
+            n_target = len(targets)
+            n_persona = len(df_figure)
+            if cat != 'SES':
+                fig, ax = plt.subplots(figsize=(((n_target)+3)/2+1, (n_persona+1)/2+1))
+            else:
+                fig, ax = plt.subplots(figsize=(((n_target)+3)/2+1, (n_persona+1)/3+1))
+            xticks = [] + targets; xticks.extend(["TB_s", "BAmt_s", "PB_s"])
 
-        ax.hlines([1], *ax.get_xlim(), colors='white', linewidth=2)
+            # tb_ti
+            start = 0; end = n_target
+            data_tb_ti = df_figure.copy()
+            data_tb_ti.iloc[:, end:] = float('nan')
+
+            vmin, vmax = get_min_max(cat, context, 'tbti')
+            print(vmin, vmax)
+            absmax = max(abs(vmin), vmax)
+            vmin = -absmax; vmax = absmax
+            print(vmin, vmax)
+
+            ax = sns.heatmap(data_tb_ti, annot=data_tb_ti.round(0), annot_kws={"fontsize": 'large'},
+                             cmap=args.cmap_tb_i, cbar=False,
+                             vmin=vmin, vmax=vmax,
+                             xticklabels=xticks,
+                             )
+                             #vmin=vmin, vmax=vmax)
+
+            # TB
+            start = end; end = end+1
+            data_tb = df_figure.copy()
+            data_tb.iloc[:, :start] = float('nan')
+            data_tb.iloc[:, end:] = float('nan')
+            vmin, vmax = get_min_max(cat, context, 'tb')
+            sns.heatmap(data_tb, annot=data_tb.round(0),  annot_kws={"fontsize": 'large'},
+                        cmap=args.cmap_tb, cbar=False,
+                        vmin=vmin, vmax=vmax)
+
+            # BAmt
+            start = end; end = end + 1
+            data_bamt = df_figure.copy()
+            data_bamt.iloc[:, :start] = float('nan')
+            data_bamt.iloc[:, end:] = float('nan')
+            vmin, vmax = get_min_max(cat, context, 'bamt')
+            sns.heatmap(data_bamt, annot=data_bamt.round(0), annot_kws={"fontsize": 'large'}, fmt=".0f",
+                        cmap=args.cmap_bamt, cbar=False,
+                        vmin=vmin, vmax=vmax)
+
+            # PB
+            start = end; end = end+1
+            data_pb = df_figure.copy()
+            data_pb.iloc[:, :start] = float('nan')
+            data_pb.iloc[:, end:] = float('nan')
+            vmin, vmax = get_min_max(cat, context, 'pb')
+            sns.heatmap(data_pb, annot=data_pb.round(0),  annot_kws={"fontsize": 'large'},
+                        cmap=args.cmap_pb, cbar=False,
+                        vmin=vmin, vmax=vmax,
+                        xticklabels=xticks)
+            '''
+            start = end; end = end+n_target
+            data_bamt_ti = df_figure.copy()
+            data_bamt_ti.iloc[:, :start] = float('nan')
+            data_bamt_ti.iloc[:, end:] = float('nan')
+            sns.heatmap(data_bamt_ti, annot=data_bamt_ti.round(3), cmap = args.cmap_bamt, cbar=False)
+            
+    
+            start = end; end = end+1
+            data_bamt = df_figure.copy()
+            data_bamt.iloc[:, :start] = float('nan')
+            data_bamt.iloc[:, end:] = float('nan')
+            sns.heatmap(data_bamt, annot=data_bamt.round(3), cmap = args.cmap_bamt, cbar=False)
+            
+    
+            start = end; end = end + 1
+            data_bs = df_figure.copy()
+            data_bs.iloc[:, :start] = float('nan')
+            data_bs.iloc[:, end:] = float('nan')
+            sns.heatmap(data_bs, annot=data_bs.round(0),
+                        cmap=args.cmap_bs, cbar=False, center=0,
+                        xticklabels=xticks)
+            '''
 
 
-        if cat == 'Age':
-            plt.subplots_adjust(left=0.35, top=0.8)
-        if cat == 'Race_ethnicity':
-            plt.subplots_adjust(left=0.16, top = 0.79)
-        elif cat == 'Religion':
-            plt.subplots_adjust(left=0.15, top=0.82)
-        elif cat == 'SES':
-            plt.subplots_adjust(left=0.4, top=0.92)
-        elif cat == 'Sexual_orientation':
-            plt.subplots_adjust(left=0.25, top=0.74)
+            plt.tick_params(axis='both', which='major', labelbottom = False, bottom=False, top = False, labeltop=True, rotation=10)
+            plt.xticks(rotation=90, fontsize='large')
+            plt.yticks(rotation=0, fontsize='large')
+            plt.xlabel("Target", fontsize='large')
+            ax.xaxis.set_label_position('top')
+            plt.ylabel("Persona", fontsize='large' )
 
-        save_dir = './result_2_TB_ti'
-        save_file = '{}_{}.png'.format(cat, context)
-        plt.savefig(os.path.join(save_dir, save_file), dpi=200)
+            ax.hlines([1], *ax.get_xlim(), colors='white', linewidth=2)
+            ymin, ymax = plt.ylim()
+            ax.vlines(x=n_target, ymin=ymin, ymax=ymax, colors='white', linewidth=2)
 
-        plt.show()
+            plt.tight_layout()
 
-        #break
+            save_dir = './result_2_TB_ti'
+            save_file = '{}_{}_{}.png'.format(model, cat, context)
+            plt.savefig(os.path.join(save_dir, save_file), dpi=200)
+
+            plt.show()
+
 
 
 def result3_stacked_bar(args):
@@ -323,7 +432,7 @@ def result3_stacked_bar(args):
             ax[i].set_yticklabels([])
         ax[i].set_xlabel(persona[i], fontsize='x-large')
 
-    fig.tight_layout()
+
     #ax[i].legend(bbox_to_anchor=())
     if category == 'Age':
         def brief_model_name(m):
@@ -337,15 +446,17 @@ def result3_stacked_bar(args):
                 return "GPT4"
             if m == 'meta-llama/Llama-2-70b-chat-hf':
                 return 'llama-70b'
-        ax[0].set_ylabel(brief_model_name(args.model))
-        plt.subplots_adjust(bottom=0.3, top=0.9, left=0.15)
-    else:
-        plt.subplots_adjust(bottom=0.3, top=0.9)
-    plt.suptitle(category)
+        ax[0].set_ylabel(brief_model_name(args.model), fontsize='x-large')
+        #plt.subplots_adjust(bottom=0.3, top=0.9, left=0.15)
+    #else:
+        #plt.subplots_adjust(bottom=0.3, top=0.9)
+    plt.suptitle(category, fontsize='x-large')
+
+    fig.tight_layout()
 
     save_dir = './result3_stackedbar'
     save_file = '{}_stackedbar_{}.pdf'.format(args.model, category)
-    plt.savefig(os.path.join(save_dir, save_file), dpi=200)
+    plt.savefig(os.path.join(save_dir, save_file), dpi=200, transparent=True)
 
     plt.show()
 
@@ -640,10 +751,10 @@ def result6_barplot_with_line(args):
         df['BAmt_ti'] = bamt_ti
         print(df)
 
-    fig, ax = plt.subplots(ncols=len(persona), figsize=(len(targets)-4, 4))
+    fig, ax = plt.subplots(ncols=len(persona), figsize=(len(targets)-4, 3.8))
     df[['pos', 'neg']].plot(kind='bar', stacked=False, ax=ax, color=['royalblue', 'red'], ylim=(0, 1), legend=False)
     #df[['TB_ti']].plot(kind='line', ax=ax2, color='green', ylim=(-0.1, 1.5))
-    ax.set_ylabel("ACC (%)", fontsize='large')
+    ax.set_ylabel("Response Rate (%)", fontsize='large')
 
     ax2 = ax.twinx()
     df[['|TB_ti|']].plot(kind='line', linestyle='dashed', ax=ax2, color='mediumorchid', marker='^', ylim=(0, 0.35), legend=False)
@@ -660,7 +771,8 @@ def result6_barplot_with_line(args):
     ax3.legend(lines+lines2+lines3, labels+labels2+labels3, loc=0)
 
     ax.set_xticklabels(targets, rotation=30)
-    ax.set_xlabel("Targets", fontsize='x-large')
+    if model == 'gpt-4-1106-preview':
+        ax.set_xlabel("Targets", fontsize='x-large')
 
     def brief_model_name(m):
         if m == 'meta-llama/Llama-2-7b-chat-hf':
@@ -677,44 +789,7 @@ def result6_barplot_with_line(args):
 
     fig.tight_layout()
 
-    plt.savefig('./result6_bar_lines/{}.pdf'.format(brief_model_name(model)), dpi=200)
-
-    plt.show()
-
-    '''
-    for i in range(len(persona)):
-        df.iloc[i * len(dict):(i + 1) * len(dict)].plot(kind='bar', stacked=True, ax=ax[i],
-                                                        color=['royalblue', 'silver', 'darkred'], legend=False)
-        ax[i].set_xticklabels(dict.keys(), fontsize="large")
-        if i != 0:
-            ax[i].set_yticklabels([])
-        ax[i].set_xlabel(persona[i], fontsize='x-large')
-    
-    fig.tight_layout()
-    # ax[i].legend(bbox_to_anchor=())
-    if category == 'Age':
-        def brief_model_name(m):
-            if m == 'meta-llama/Llama-2-7b-chat-hf':
-                return 'llama-7b'
-            if m == 'meta-llama/Llama-2-13b-chat-hf':
-                return 'llama-13b'
-            if m == 'gpt-3.5-turbo-0613':
-                return "GPT3.5"
-            if m == 'gpt-4-1106-preview':
-                return "GPT4"
-            if m == 'meta-llama/Llama-2-70b-chat-hf':
-                return 'llama-70b'
-
-        ax[0].set_ylabel(brief_model_name(args.model))
-        plt.subplots_adjust(bottom=0.3, top=0.9, left=0.15)
-    else:
-        plt.subplots_adjust(bottom=0.3, top=0.9)
-    plt.suptitle(category)
-    '''
-
-    #save_dir = './result3_stackedbar'
-    #save_file = '{}_stackedbar_{}.pdf'.format(args.model, category)
-    #plt.savefig(os.path.join(save_dir, save_file), dpi=200)
+    plt.savefig('./result6_bar_lines/{}.pdf'.format(brief_model_name(model)), dpi=200, transparent=True)
 
     plt.show()
 
@@ -796,8 +871,8 @@ def get_args():
     parser.add_argument('--file_name_2', type=str, default='merged_total_rp_{}_cc_{}.csv')
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=1)
     parser.add_argument('--category', type=str, default='Religion')
 
@@ -824,8 +899,8 @@ if __name__ == "__main__":
 
     #collect_tables(args)
     #main(args)
-    result1_main_heatmap(args)
-    #result2(args)
+    #result1_main_heatmap(args)
+    result2(args)
     #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
     #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
     #        args.model = model
