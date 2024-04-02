@@ -233,7 +233,7 @@ def main(args):
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--result_dir', type=str, default='Bias_Score_modifyunknown')
+    parser.add_argument('--result_dir', type=str, default='Bias_Score')
     #parser.add_argument('--result_dir', type=str, default='Bias_Score_notunknown')
     parser.add_argument('--save_dir', type=str, default='total_merged')
 

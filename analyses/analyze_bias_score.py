@@ -225,6 +225,8 @@ def main(args):
 
         #print(df_score_ambig)
         #print(df_score_ambig/df_cnt_ambig)
+        print(df_cnt_ambig)
+        break
         df_result_ambig = df_score_ambig/df_cnt_ambig
         df_result_abs_ambig = df_abs_score_ambig/df_cnt_ambig
         df_result_disambig = df_score_disambig/df_cnt_disambig
