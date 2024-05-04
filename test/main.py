@@ -85,9 +85,9 @@ def get_args():
 
     parser.add_argument('--reasoning', type=int, default=1)
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default="meta-llama/Llama-2-70b-chat-hf")
+    parser.add_argument('--model', type=str, default="meta-llama/Llama-2-70b-chat-hf")
     #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
     parser.add_argument('--openai_api_key', type=str, default=None)
