@@ -3,7 +3,7 @@ import os, datetime, argparse
 from persona import call_persona_list, call_persona_instruction
 from qa import call_bbq
 from generate import get_generative_model, generate
-from utils import set_toy, save_json_file
+from utils import set_toy, file_exist, save_json_file
 
 
 def test(args, persona_instruction, persona_category, persona, qa_dataset, client):
@@ -42,7 +42,7 @@ def main(args):
     if args.toy == 1:
         args = set_toy(args)
 
-    persona_instruction = call_persona_instruction(n=args.instruction_k)
+    persona_instruction = call_persona_instruction(n=args.instruction_end)
 
     persona_category = args.persona_category
     target_category = args.target_category
@@ -66,12 +66,14 @@ def main(args):
 
     for p_no, p in enumerate(persona_list):
         for inst_no, inst in enumerate(persona_instruction):
-            if inst_no < args.instruction_start:
+            #if inst_no < args.instruction_start:
+            #    continue
+            if file_exist(args, persona_category, target_category, p, inst_no):
                 continue
             print(p_no, p, inst_no, inst)
             timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")  # identifiable_token
-            response_list = test(args, inst, persona_category, p, qa_dataset, g_model)
-            save_json_file(args, persona_category, target_category, p, inst_no, response_list, timestamp)
+            #response_list = test(args, inst, persona_category, p, qa_dataset, g_model)
+            #save_json_file(args, persona_category, target_category, p, inst_no, response_list, timestamp)
 
     return
 
@@ -80,25 +82,25 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--source_dir', type=str, default='./../source')
-    parser.add_argument('--output_dir', type=str, default='./../results/reason/origin')
+    parser.add_argument('--output_dir', type=str, default='./../results/origin')
     parser.add_argument('--persona_file', type=str, default='persona_list.csv')
 
-    parser.add_argument('--reasoning', type=int, default=1)
+    parser.add_argument('--reasoning', type=int, default=0)
 
     #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default="meta-llama/Llama-2-70b-chat-hf")
+    parser.add_argument('--model', type=str, default="meta-llama/Llama-2-7b-chat-hf")
     #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
     parser.add_argument('--openai_api_key', type=str, default=None)
     parser.add_argument('--deepinfra_api_key', type=str, default='R6otLBPsV1Zh1DEf0UDr9KliIHMp2uHc')
     parser.add_argument('--google_ai_api_key', type=str, default="AIzaSyC86w89PjZpPhgkNGo3KQsb5c-b0awIJnQ")
 
-    parser.add_argument('--persona_category', type=str, default='Baseline')
-    parser.add_argument('--target_category', type=str, default='Age')
+    parser.add_argument('--persona_category', type=str, default='SES')
+    parser.add_argument('--target_category', type=str, default='SES')
 
     parser.add_argument('--instruction_start', type=int, default=0)
-    parser.add_argument('--instruction_k', type=int, default=1)
+    parser.add_argument('--instruction_end', type=int, default=3)
     parser.add_argument('--qa_k', type=int, default=None)
 
     parser.add_argument('--toy', type=int, default=0)
