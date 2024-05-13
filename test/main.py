@@ -68,7 +68,7 @@ def main(args):
         for inst_no, inst in enumerate(persona_instruction):
             #if inst_no < args.instruction_start:
             #    continue
-            if file_exist(args, persona_category, target_category, p, inst_no):
+            if file_exist(args, persona_category, p, inst_no):
                 continue
             print(p_no, p, inst_no, inst)
             timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")  # identifiable_token
