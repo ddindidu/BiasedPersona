@@ -20,6 +20,7 @@ def result1_main_heatmap(args):
     file_pb = 'persona_bias_{}_rp_{}_cc_{}.csv'
     file_bs = 'bs_{}_rp_{}_cc_{}.csv'
 
+    '''
     def get_df(dir, f_name, rp, cc):
         df_ambig = pd.read_csv(os.path.join(dir, f_name.format('ambig', rp, cc)), index_col=0)
         df_ambig.index=args.cat_names
@@ -28,11 +29,42 @@ def result1_main_heatmap(args):
         df_disambig.index=args.cat_names
         df_disambig.columns=args.model_names
         return df_ambig.T, df_disambig.T
+    '''
 
-    tb_amb, tb_dis = get_df(args.save_dir, file_tb, args.rp, args.cc)
-    bamt_amb, bamt_dis = get_df(args.save_dir, file_bamt, args.rp, args.cc)
-    pb_amb, pb_dis = get_df(args.save_dir, file_pb, args.rp, args.cc)
-    bs_amb, bs_dis = get_df(args.save_dir, file_bs, args.rp, args.cc)
+    def get_df(dir, f_name, context, rp, cc):
+        models = ['llama7b', 'llama13b', 'llama70b', 'gpt-3.5', 'gpt-4']
+        domains = ['Age', 'Race_ethnicity', 'Religion', 'SES', 'Sexual_orientation']
+        tb = pd.DataFrame()
+        bamt = pd.DataFrame()
+        pb = pd.DataFrame()
+        bs = pd.DataFrame()
+
+        cont = 'a' if context == 'ambig' else 'd'
+
+        for domain in domains:
+            source_dir = os.path.join(dir, domain)
+            source_f_name = f_name.format(domain, context, rp, cc)
+            source_path = os.path.join(source_dir, source_f_name)
+
+            df  = pd.read_csv(source_path, index_col=0)
+            df.index = models
+
+            tb = pd.concat([tb, df['TB']], axis=1)
+            bamt = pd.concat([bamt, df['BAmt']], axis=1)
+            pb = pd.concat([pb, df['PB']], axis=1)
+            bs = pd.concat([bs, df['BS_{}'.format(cont)]], axis=1)
+
+        short_domains = ['Age', 'Race', 'Religion', 'SES', 'SexualO']
+        tb.columns = short_domains
+        bamt.columns = short_domains
+        pb.columns = short_domains
+        bs.columns = short_domains
+
+        return tb, bamt, pb, bs
+
+    tb_amb, bamt_amb, pb_amb, bs_amb = get_df(args.source_dir, args.source_file, 'ambig', args.rp, args.cc)
+    tb_dis, bamt_dis, pb_dis, bs_dis = get_df(args.source_dir, args.source_file, 'disambig', args.rp, args.cc)
+
 
     def draw_heatmap(df, context, location, colormap, plusminus=False):
         if plusminus == False:
@@ -89,6 +121,7 @@ def result1_main_heatmap(args):
 
     fig.tight_layout()
 
+    plt.savefig(os.path.join(args.save_dir, 'result_tables_each.png'), dpi=200)
     plt.savefig(os.path.join(args.save_dir, 'result_tables_each.pdf'), dpi=200)
 
     plt.show()
@@ -436,9 +469,9 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--raw_dir', type=str, default='./../../results/refined/')
-    parser.add_argument('--result_dir', type=str, default='./../total_merged_models/Bias_Score_modifyunknown')
+    parser.add_argument('--source_dir', type=str, default='./../total_score_model_merged/')
     parser.add_argument('--result2_dir', type=str, default='./../total_merged/Bias_Score_modifyunknown')
-    parser.add_argument('--file_name', type=str, default='merged_total_models_rp_{}_cc_{}.csv')
+    parser.add_argument('--source_file', type=str, default='{}_{}_rp_{}_cc_{}.csv')   # domain_context_rp_cc
     parser.add_argument('--file_name_2', type=str, default='merged_total_rp_{}_cc_{}.csv')
 
     parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
@@ -470,7 +503,7 @@ if __name__ == "__main__":
 
     #collect_tables(args)
     #main(args)
-    #result1_main_heatmap(args)
+    result1_main_heatmap(args)
     #result2(args)
     #result2_for_case(args)
     #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
@@ -482,4 +515,4 @@ if __name__ == "__main__":
     #result4_scatterplot(args)
     #result5_knn(args)
 
-    result6_barplot_with_line(args)
+    #result6_barplot_with_line(args)
