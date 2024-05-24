@@ -15,22 +15,6 @@ from plot_bar_with_lines import result6_barplot_with_line
 
 
 def result1_main_heatmap(args):
-    file_tb = 'target_bias_{}_rp_{}_cc_{}.csv'
-    file_bamt = 'bias_amount_{}_rp_{}_cc_{}.csv'
-    file_pb = 'persona_bias_{}_rp_{}_cc_{}.csv'
-    file_bs = 'bs_{}_rp_{}_cc_{}.csv'
-
-    '''
-    def get_df(dir, f_name, rp, cc):
-        df_ambig = pd.read_csv(os.path.join(dir, f_name.format('ambig', rp, cc)), index_col=0)
-        df_ambig.index=args.cat_names
-        df_ambig.columns=args.model_names
-        df_disambig = pd.read_csv(os.path.join(dir, f_name.format('disambig', rp, cc)), index_col=0)
-        df_disambig.index=args.cat_names
-        df_disambig.columns=args.model_names
-        return df_ambig.T, df_disambig.T
-    '''
-
     def get_df(dir, f_name, context, rp, cc):
         models = ['llama7b', 'llama13b', 'llama70b', 'gpt-3.5', 'gpt-4']
         domains = ['Age', 'Race_ethnicity', 'Religion', 'SES', 'Sexual_orientation']
@@ -470,13 +454,13 @@ def get_args():
 
     parser.add_argument('--raw_dir', type=str, default='./../../results/refined/')
     parser.add_argument('--source_dir', type=str, default='./../total_score_model_merged/')
-    parser.add_argument('--result2_dir', type=str, default='./../total_merged/Bias_Score_modifyunknown')
+    parser.add_argument('--source_dir2', type=str, default='./../total_score')
     parser.add_argument('--source_file', type=str, default='{}_{}_rp_{}_cc_{}.csv')   # domain_context_rp_cc
-    parser.add_argument('--file_name_2', type=str, default='merged_total_rp_{}_cc_{}.csv')
+    parser.add_argument('--file_name_2', type=str, default='aver_{}_{}_rp_{}_cc_{}.csv')    # domain_context_rp_cc
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=1)
     parser.add_argument('--category', type=str, default='Religion')
 
@@ -503,8 +487,8 @@ if __name__ == "__main__":
 
     #collect_tables(args)
     #main(args)
-    result1_main_heatmap(args)
-    #result2(args)
+    #result1_main_heatmap(args)
+    result2(args)
     #result2_for_case(args)
     #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
     #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
