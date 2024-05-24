@@ -242,6 +242,7 @@ def result3_stacked_bar(args):
 
 
 def result4_scatterplot(args):
+    '''
     file_tb = 'target_bias_{}_rp_{}_cc_{}.csv'
     file_bamt = 'bias_amount_{}_rp_{}_cc_{}.csv'
     file_pb = 'persona_bias_{}_rp_{}_cc_{}.csv'
@@ -262,18 +263,40 @@ def result4_scatterplot(args):
     #pb_amb, pb_dis = get_df(args.save_dir, file_pb, args.rp, args.cc)
     #bs_amb, bs_dis = get_df(args.save_dir, file_bs, args.rp, args.cc)
     acc_amb, acc_dis = get_df(args.save_dir, file_acc, args.rp, args.cc)
+    '''
+    def get_df(dir, f_name, domain, context, rp, cc):
+        f_path = os.path.join(dir, domain,
+                              f_name.format(domain, context, rp, cc))
+        df = pd.read_csv(f_path, index_col=0)
 
-    models = tb_amb.index
-    domain = tb_amb.columns
+        return df
+
+
+    models = args.model_names
+    domain = args.categories
 
     Xs, Ys = [], []
 
     fig, ax = plt.subplots()
 
-    markers = ['.', '^', '1', 'x', 's']
+    #markers = ['.', '^', '1', 'x', 's']
+    markers = ['x', 'o']
     colors = ['darkred', 'lightcoral', 'y', 'cornflowerblue', 'darkblue']
-    #markers = ['o'] * 5
-    #colors = ['royalblue'] * 5
+
+    bamt_list, acc_list = [], []
+    for d in domain:
+        for cont, mark in zip(['ambig', 'disambig'], markers):
+            df = get_df(args.source_dir, args.source_file, d, cont, args.rp, args.cc)
+
+            for row, color in zip(df.iterrows(), colors):
+                #print(row)
+                bamt = row[1]['BAmt']
+                acc = row[1]['Acc_{}'.format('a' if cont == 'ambig' else 'd')]
+                Xs.append(bamt)
+                Ys.append(acc)
+                ax.scatter(bamt, acc, c=color, marker=mark, alpha=0.7)
+
+    '''
     for d, mark in zip(domain, markers):
         for m, color in zip(models, colors):
             bamt = []
@@ -283,10 +306,6 @@ def result4_scatterplot(args):
             Xs.append(bamt_amb.at[m, d])
             Ys.append(acc_amb.at[m, d])
             ax.scatter(bamt, acc, c=color, marker=mark, alpha=0.7)
-    #plt.legend()
-    #plt.show()
-
-    #fig, ax = plt.subplots()
 
     for d, mark in zip(domain, markers):
         for m, color in zip(models, colors):
@@ -297,13 +316,22 @@ def result4_scatterplot(args):
             Xs.append(bamt_dis.at[m, d])
             Ys.append(acc_dis.at[m, d])
             ax.scatter(bamt, acc, c=color, marker=mark, alpha=0.7)
+    '''
+    import scipy.stats as sts
+    corr, p = sts.pearsonr(Xs, Ys)
+    print(corr, p)
+
+    ax.line
+
 
     legs = []
     for m, c in zip(models, colors):
         legs.append(matplotlib.patches.Patch(color=c, label=m))
-    ax.legend(handles=legs)
-    plt.xlabel("BAmt")
-    plt.ylabel("Acc")
+    ax.legend(handles=legs, fontsize='large')
+    plt.xlabel("BAmt", fontsize='large')
+    plt.ylabel("Acc", fontsize='large')
+
+    plt.tight_layout()
 
     save_dir = './result4_corr'
     save_file = 'corr_bamt_acc.pdf'
@@ -311,9 +339,7 @@ def result4_scatterplot(args):
 
     plt.show()
 
-    import scipy.stats as sts
-    corr, p = sts.pearsonr(Xs, Ys)
-    print(corr, p)
+
 
 
 def result5_knn(args):
@@ -487,16 +513,19 @@ if __name__ == "__main__":
 
     #collect_tables(args)
     #main(args)
+
     #result1_main_heatmap(args)
-    result2(args)
+
+    #result2(args)
     #result2_for_case(args)
+
     #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
     #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
     #        args.model = model
     #        args.category = cat
     #        result3_stacked_bar(args)
 
-    #result4_scatterplot(args)
+    result4_scatterplot(args)
     #result5_knn(args)
 
     #result6_barplot_with_line(args)
