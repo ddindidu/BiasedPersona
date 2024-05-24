@@ -210,7 +210,9 @@ def result3_stacked_bar(args):
         ax[i].set_xticklabels(dict.keys(), fontsize="large")
         if i != 0:
             ax[i].set_yticklabels([])
-        ax[i].set_xlabel(persona[i], fontsize='x-large')
+
+        p = persona[i] if persona[i] != 'Baseline' else 'Default'
+        ax[i].set_xlabel(p, fontsize='x-large')
 
 
     #ax[i].legend(bbox_to_anchor=())
@@ -519,13 +521,13 @@ if __name__ == "__main__":
     #result2(args)
     #result2_for_case(args)
 
-    #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
-    #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
-    #        args.model = model
-    #        args.category = cat
-    #        result3_stacked_bar(args)
+    for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
+        for cat in ['Age', 'Religion', 'Race_ethnicity']:
+            args.model = model
+            args.category = cat
+            result3_stacked_bar(args)
 
-    result4_scatterplot(args)
+    #result4_scatterplot(args)
     #result5_knn(args)
 
     #result6_barplot_with_line(args)

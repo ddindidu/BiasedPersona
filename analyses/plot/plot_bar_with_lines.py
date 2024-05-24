@@ -2,6 +2,21 @@ import os, json, glob
 import pandas as pd
 import matplotlib.pyplot as plt
 
+def set_tex():
+    os.environ['PATH'] += os.pathsep + "/usr/bin/latex"
+    print(os.getenv("PATH"))
+
+    plt.rcParams.update({
+        "text.usetex": True,
+        'text.latex.preamble': r'\usepackage{amsmath}',
+        "font.family": "sans-serif",
+        "font.sans-serif": "Helvetica",
+        "mathtext.rm": "serif",
+        "mathtext.it": "serif:italic",
+        "mathtext.bf": "serif:bold",
+    })
+
+
 def result6_barplot_with_line(args):
     category = args.category
     result_dir = args.raw_dir
