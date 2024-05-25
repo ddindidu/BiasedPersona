@@ -232,7 +232,7 @@ def result3_stacked_bar(args):
         #plt.subplots_adjust(bottom=0.3, top=0.9, left=0.15)
     #else:
         #plt.subplots_adjust(bottom=0.3, top=0.9)
-    plt.suptitle(category, fontsize='x-large')
+    plt.suptitle(category if category != 'Race_ethnicity' else 'Race/Ethnicity', fontsize='x-large')
 
     fig.tight_layout()
 
@@ -486,10 +486,10 @@ def get_args():
     parser.add_argument('--source_file', type=str, default='{}_{}_rp_{}_cc_{}.csv')   # domain_context_rp_cc
     parser.add_argument('--file_name_2', type=str, default='aver_{}_{}_rp_{}_cc_{}.csv')    # domain_context_rp_cc
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
-    parser.add_argument('--instruction_k', type=int, default=1)
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--instruction_k', type=int, default=5)
     parser.add_argument('--category', type=str, default='Religion')
 
     parser.add_argument('--save_dir', type=str, default='./result_tables')
@@ -525,6 +525,14 @@ if __name__ == "__main__":
         for cat in ['Age', 'Religion', 'Race_ethnicity']:
             args.model = model
             args.category = cat
+
+            if 'gpt-3.5' in args.model:
+                args.instruction_k=5
+            elif 'llama' in args.model:
+                args.instruction_k=3
+            else:
+                args.instruction_k=1
+
             result3_stacked_bar(args)
 
     #result4_scatterplot(args)
