@@ -409,74 +409,6 @@ def result5_knn(args):
         plt.show()
 
 
-
-def collect_tables(args):
-    def concat(df_total_amb, df_total_dis, df, score_name, contexts):
-        amb = df.loc[:, ['{}_{}'.format(score_name, contexts[0])]].T
-        dis = df[['{}_{}'.format(score_name, contexts[1])]].T
-        # print(amb.T)
-
-        df_total_amb = pd.concat([df_total_amb, amb], axis=0, ignore_index=True)
-        df_total_dis = pd.concat([df_total_dis, dis], axis=0, ignore_index=True)
-
-        return df_total_amb, df_total_dis
-
-
-    def rename_index_col(df, rows, cols):
-        df.index=rows
-        df.columns=cols
-        return df
-
-
-    df_tb_amb = pd.DataFrame()
-    df_tb_dis = pd.DataFrame()
-    df_bamt_amb = pd.DataFrame()
-    df_bamt_dis = pd.DataFrame()
-    df_pb_amb = pd.DataFrame()
-    df_pb_dis = pd.DataFrame()
-    df_bs_amb = pd.DataFrame()
-    df_bs_dis = pd.DataFrame()
-    df_acc_amb = pd.DataFrame()
-    df_acc_dis = pd.DataFrame()
-
-    for category in args.categories:
-        f_name = args.file_name.format(args.rp, args.cc)
-        f_path = os.path.join(args.result_dir, category, f_name)
-
-        df = pd.read_csv(f_path)
-
-        #scores = ['Polarity', 'Amount', 'BS']
-        contexts = ['ambig', 'disambig']
-
-        df_tb_amb, df_tb_dis = concat(df_tb_amb, df_tb_dis, df, 'Polarity', contexts)
-        df_bamt_amb, df_bamt_dis = concat(df_bamt_amb, df_bamt_dis, df, 'Amount', contexts)
-        df_pb_amb, df_pb_dis = concat(df_pb_amb, df_pb_dis, df, 'PB', contexts)
-        df_bs_amb, df_bs_dis = concat(df_bs_amb, df_bs_dis, df, 'BS', contexts)
-        df_acc_amb, df_acc_dis = concat(df_acc_amb, df_acc_dis, df, 'Acc', contexts)
-
-    df_tb_amb = rename_index_col(df_tb_amb, args.cat_names, args.model_names)
-    df_tb_dis = rename_index_col(df_tb_dis, args.cat_names, args.model_names)
-    df_bamt_amb = rename_index_col(df_bamt_amb, args.cat_names, args.model_names)
-    df_bamt_dis = rename_index_col(df_bamt_dis, args.cat_names, args.model_names)
-    df_pb_amb = rename_index_col(df_pb_amb, args.cat_names, args.model_names)
-    df_pb_dis = rename_index_col(df_pb_dis, args.cat_names, args.model_names)
-    df_bs_amb = rename_index_col(df_bs_amb, args.cat_names, args.model_names)
-    df_bs_dis = rename_index_col(df_bs_dis, args.cat_names, args.model_names)
-    df_acc_amb = rename_index_col(df_acc_amb, args.cat_names, args.model_names)
-    df_acc_dis = rename_index_col(df_acc_dis, args.cat_names, args.model_names)
-
-    df_tb_amb.to_csv(os.path.join(args.save_dir, 'target_bias_ambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_tb_dis.to_csv(os.path.join(args.save_dir, 'target_bias_disambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_bamt_amb.to_csv(os.path.join(args.save_dir, 'bias_amount_ambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_bamt_dis.to_csv(os.path.join(args.save_dir, 'bias_amount_disambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_pb_amb.to_csv(os.path.join(args.save_dir, 'persona_bias_ambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_pb_dis.to_csv(os.path.join(args.save_dir, 'persona_bias_disambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_bs_amb.to_csv(os.path.join(args.save_dir, 'bs_ambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_bs_dis.to_csv(os.path.join(args.save_dir, 'bs_disambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_acc_amb.to_csv(os.path.join(args.save_dir, 'acc_ambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-    df_acc_dis.to_csv(os.path.join(args.save_dir, 'acc_disambig_rp_{}_cc_{}.csv'.format(args.rp, args.cc)))
-
-
 def get_args():
     parser = argparse.ArgumentParser()
 
@@ -513,7 +445,6 @@ def get_args():
 if __name__ == "__main__":
     args = get_args()
 
-    #collect_tables(args)
     #main(args)
 
     #result1_main_heatmap(args)
