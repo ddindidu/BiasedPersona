@@ -1,5 +1,6 @@
 import os, json, glob
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 
 def set_tex():
@@ -23,8 +24,8 @@ def result6_barplot_with_line(args):
     model = args.model
     f_name = 'refined_p_{}_inst_{}_target_{}*.json'
 
-    analysis_dir = args.result2_dir
-    analysis_f_name = args.file_name_2.format(args.rp, args.cc)
+    analysis_dir = args.source_dir2
+    analysis_f_name = args.file_name_2.format('Religion', 'ambig', args.rp, args.cc)
 
     def get_target_names(category, mode):
         if mode == 'all':
@@ -70,7 +71,7 @@ def result6_barplot_with_line(args):
 
         for inst in range(args.instruction_k):
             df = pd.DataFrame()
-            dict = {targ: [0, 0, 0, 0] for targ in targets}  # positive / neutral / negative
+            dict = {targ: [0, 0, 0, 0] for targ in targets}  # positive / neutral / negative / n
             n = 0
 
             file = f_name.format(p, inst, t)
@@ -173,28 +174,36 @@ def result6_barplot_with_line(args):
         analysis_path = os.path.join(analysis_dir, model, category, analysis_f_name)
         print(analysis_path)
         analysis_df = pd.read_csv(analysis_path, index_col=0)
-        tb_ti = analysis_df.loc[p,['{}_polarity_amb'.format(targ) for targ in targets]]
-        bamt_ti = analysis_df.loc[p,['{}_amount_amb'.format(targ) for targ in targets]]
+        tb_ti = analysis_df.loc[p,['TB_{}'.format(targ) for targ in targets]]
+        bamt_ti = analysis_df.loc[p,['BAmt_{}'.format(targ) for targ in targets]]
         tb_ti = tb_ti.tolist(); bamt_ti = bamt_ti.tolist()
         df['TB_{p0→ti}'] = tb_ti
         df['|TB_{p0→ti}|'] = [abs(x) for x in tb_ti]
         df['BAmt_{p0→ti}'] = bamt_ti
         print(df)
 
+
+
     fig, ax = plt.subplots(ncols=len(persona), figsize=(len(targets)-4, 3.8))
     df[['pos', 'neg']].plot(kind='bar', stacked=False, ax=ax, color=['royalblue', 'red'], ylim=(0, 1), legend=False)
     #df[['TB_ti']].plot(kind='line', ax=ax2, color='green', ylim=(-0.1, 1.5))
-    ax.set_ylabel("Seperated TB_{p0→t}", fontsize='large')
+    set_tex()
+    ax.set_ylabel(r"Seperated $\mathrm{TB}_{p_{0}\rightarrow t}$", fontsize='large')
+    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
     ax2 = ax.twinx()
     df[['|TB_{p0→ti}|']].plot(kind='line', linestyle='dashed', ax=ax2, color='mediumorchid', marker='^', ylim=(0, 0.35), legend=False)
-    col = "$|TB_{p_0 \rightarrow t}|$"
-    ax2.set_ylabel("|TB_{p0→t}|", fontsize='large')
+    #col = "|TB_{p_0 \rightarrow t}|"
+    set_tex()
+    ax2.set_ylabel(r"$|\mathrm{TB}_{p_{0}\rightarrow t}|$", fontsize='large')
+    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
     ax3 = ax.twinx()
     df[['BAmt_{p0→ti}']].plot(kind='line', ax=ax3, color = 'darkorange', ylim = (0, 1.1), marker='.', legend=False)
     ax3.spines['right'].set_position(('outward', 50))
-    ax3.set_ylabel("BAmt_{p0→t}", fontsize='large')
+    set_tex()
+    ax3.set_ylabel(r"$\mathrm{BAmt}_{p_{0}\rightarrow t}$", fontsize='large')
+    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
@@ -203,6 +212,8 @@ def result6_barplot_with_line(args):
 
     ax.set_xticklabels(targets, rotation=30)
     if model == 'gpt-4-1106-preview':
+        labels2 = [r"$|\mathrm{TB}_{p_{0}\rightarrow t}|$"]
+        labels3 = [r"$\mathrm{BAmt}_{p_{0}\rightarrow t}$"]
         ax3.legend(lines + lines2 + lines3, labels + labels2 + labels3, loc=0)
         ax.set_xlabel("Targets", fontsize='x-large')
 
