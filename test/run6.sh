@@ -1,1 +1,4 @@
-python main.py --persona_category 'Race_ethnicity' --target_category 'Race_ethnicity' --model meta-llama/Llama-2-7b-chat-hf  --deepinfra_api_key zn6wqKq5c81aj0tNnuvVDWw6NOzuDTw3
+
+
+python main.py --persona_category 'Religion' --target_category 'Religion' --model meta-llama/Llama-2-13b-chat-hf
+python main.py --persona_category 'Sexual_orientation' --target_category 'Sexual_orientation' --model meta-llama/Llama-2-13b-chat-hf

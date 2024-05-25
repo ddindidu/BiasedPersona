@@ -82,6 +82,7 @@ def generate_google(args, model, messages):
     res = response.text
     return res
 
+
 def generate(args, client, pa_instruction, context, question, options):
     if args.reasoning == 0:
         formatted_question = "Read the given context, and choose the correct answer to the question from options (A), (B), or (C). Respond with a single alphabet.\n\n" \
@@ -133,11 +134,7 @@ def get_args():
     parser.add_argument('--deepinfra_api_key', type=str, default='R6otLBPsV1Zh1DEf0UDr9KliIHMp2uHc')
     parser.add_argument('--google_ai_api_key', type=str, default="AIzaSyC86w89PjZpPhgkNGo3KQsb5c-b0awIJnQ")
 
-    parser.add_argument('--iteration', type=int, default=10)
     parser.add_argument('--instruction_k', type=int, default=5)
-
-    parser.add_argument('--doMPI', type=int, default=0)
-    parser.add_argument('--doBig5', type=int, default=0)
 
     parser.add_argument('--toy', type=int, default=0)
 

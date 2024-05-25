@@ -66,14 +66,14 @@ def main(args):
 
     for p_no, p in enumerate(persona_list):
         for inst_no, inst in enumerate(persona_instruction):
-            #if inst_no < args.instruction_start:
-            #    continue
+            if inst_no < args.instruction_start:
+                continue
             if file_exist(args, persona_category, p, inst_no):
                 continue
             print(p_no, p, inst_no, inst)
             timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")  # identifiable_token
-            #response_list = test(args, inst, persona_category, p, qa_dataset, g_model)
-            #save_json_file(args, persona_category, target_category, p, inst_no, response_list, timestamp)
+            response_list = test(args, inst, persona_category, p, qa_dataset, g_model)
+            save_json_file(args, persona_category, target_category, p, inst_no, response_list, timestamp)
 
     return
 
@@ -93,7 +93,7 @@ def get_args():
     #parser.add_argument('--temperature', type=int, default=0)
     parser.add_argument('--api_key', type=int, default=0)
     parser.add_argument('--openai_api_key', type=str, default=None)
-    parser.add_argument('--deepinfra_api_key', type=str, default='R6otLBPsV1Zh1DEf0UDr9KliIHMp2uHc')
+    parser.add_argument('--deepinfra_api_key', type=str, default='5r7osFo18xFNBwwTDVb4IOWR22PZ4S9F')
     parser.add_argument('--google_ai_api_key', type=str, default="AIzaSyC86w89PjZpPhgkNGo3KQsb5c-b0awIJnQ")
 
     parser.add_argument('--persona_category', type=str, default='SES')
