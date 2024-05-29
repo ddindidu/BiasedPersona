@@ -418,9 +418,9 @@ def get_args():
     parser.add_argument('--source_file', type=str, default='{}_{}_rp_{}_cc_{}.csv')   # domain_context_rp_cc
     parser.add_argument('--file_name_2', type=str, default='aver_{}_{}_rp_{}_cc_{}.csv')    # domain_context_rp_cc
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=5)
     parser.add_argument('--category', type=str, default='Religion')
 
@@ -452,21 +452,21 @@ if __name__ == "__main__":
     #result2(args)
     #result2_for_case(args)
 
-    for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
-        for cat in ['Age', 'Religion', 'Race_ethnicity']:
-            args.model = model
-            args.category = cat
+    #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
+    #    for cat in ['Age', 'Religion', 'Race_ethnicity']:
+    #        args.model = model
+    #        args.category = cat
 
-            if 'gpt-3.5' in args.model:
-                args.instruction_k=5
-            elif 'llama' in args.model:
-                args.instruction_k=3
-            else:
-                args.instruction_k=1
+    #        if 'gpt-3.5' in args.model:
+    #            args.instruction_k=5
+    #        elif 'llama' in args.model:
+    #            args.instruction_k=3
+    #        else:
+    #            args.instruction_k=1
 
-            result3_stacked_bar(args)
+    #        result3_stacked_bar(args)
 
     #result4_scatterplot(args)
     #result5_knn(args)
 
-    #result6_barplot_with_line(args)
+    result6_barplot_with_line(args)

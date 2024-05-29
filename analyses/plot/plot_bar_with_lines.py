@@ -188,7 +188,7 @@ def result6_barplot_with_line(args):
     df[['pos', 'neg']].plot(kind='bar', stacked=False, ax=ax, color=['royalblue', 'red'], ylim=(0, 1), legend=False)
     #df[['TB_ti']].plot(kind='line', ax=ax2, color='green', ylim=(-0.1, 1.5))
     set_tex()
-    ax.set_ylabel(r"Seperated $\mathrm{TB}_{p_{0}\rightarrow t}$", fontsize='large')
+    ax.set_ylabel(r"Separated $\mathrm{TB}_{p_{0}\rightarrow t}$", fontsize='large')
     matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
     ax2 = ax.twinx()
