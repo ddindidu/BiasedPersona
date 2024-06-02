@@ -210,12 +210,12 @@ def get_args():
     parser.add_argument('--result_dir', type=str, default='./total_score')
     parser.add_argument('--result_file', type=str, default='inst_{}_{}_{}_rp_{}_cc_{}.csv') # inst_{inst_no}_{domain}_{context}_rp_{rp}_cc_{cc}.csv
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    #parser.add_argument('--instruction_k', type=int, default=5)
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    parser.add_argument('--instruction_k', type=int, default=5)
     #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     #parser.add_argument('--instruction_k', type=int, default=1)
-    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
-    parser.add_argument('--instruction_k', type=int, default=5)
+    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-13b-chat-hf')
+    #parser.add_argument('--instruction_k', type=int, default=5)
 
     parser.add_argument('--context', type=list, default=['ambig', 'disambig'])
     parser.add_argument('--rp', type=int, default=2)

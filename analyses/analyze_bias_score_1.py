@@ -96,6 +96,8 @@ def main(args):
             #file_idx = p_no * instruction_k + inst_no
             #f_name = file_list[file_idx]
             #print(persona, inst_no, file_idx, f_name)
+            if persona in ['Orthodox', 'Alaskan']:
+                continue
             def read_file(result_dir, persona, inst_no, target_category):
 
                 f_template = 'refined_p_{}_inst_{}_target_{}*'
@@ -253,9 +255,9 @@ def main(args):
         save_file_name_dict = accumulate_save_file_name(save_file_name_dict, save_file_name)
 
     # merge all dataset
-    #if args.instruction_k > 1:
-    #    df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs = average_scores(save_file_name_dict)
-    #    _ = save_file(args, None, df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs)
+    if args.instruction_k > 1:
+        df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs = average_scores(save_file_name_dict)
+        _ = save_file(args, None, df_overall, df_ambig, df_ambig_abs, df_disambig, df_disambig_abs)
 
 
 def average_scores(save_file_name_dict):
@@ -368,11 +370,11 @@ def get_args():
     parser.add_argument('--output_dir', type=str, default='./Bias_Score')
     parser.add_argument('--new_score_deno', type=int, default=0)
 
-    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--instruction_k', type=int, default=5)
-    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
-    #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
     #parser.add_argument('--instruction_k', type=int, default=5)
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--model', type=str, default='meta-llama/Llama-2-70b-chat-hf')
+    parser.add_argument('--instruction_k', type=int, default=5)
 
     parser.add_argument('--persona_category', type=str, default='Baseline')
     parser.add_argument('--target_category', type=str, default='Race_ethnicity')
@@ -388,8 +390,8 @@ if __name__ == "__main__":
     args = get_args()
     #print(args)
 
-    points = [(2, 1), (1, 1), (1, 0)]
-    # points = [(2, 1)]
+    #points = [(2, 1), (1, 1), (1, 0)]
+    points = [(2, 1)]
 
     fields = []
 
@@ -398,7 +400,7 @@ if __name__ == "__main__":
     #else:
     #    fields = ['Age', 'Religion', 'Sexual_orientation','SES', 'Race_ethnicity']
     fields = ['Age', 'Religion', 'Sexual_orientation', 'SES', 'Race_ethnicity']
-    fields = ['Race_ethnicity']
+    #fields = ['Race_ethnicity']
 
     for point in points:
         args.rp = point[0]
