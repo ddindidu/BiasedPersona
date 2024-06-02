@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     for domain in args.domains:
         for context in args.contexts:
-            result_df = merge(args, domain, context)
+            result_df = merge(args, domain, context).round(2)
 
             save_dir = os.path.join(args.result_dir, domain)
             if not os.path.exists(save_dir):
