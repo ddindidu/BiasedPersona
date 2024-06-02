@@ -323,8 +323,6 @@ def result4_scatterplot(args):
     corr, p = sts.pearsonr(Xs, Ys)
     print(corr, p)
 
-    ax.line
-
 
     legs = []
     for m, c in zip(models, colors):
@@ -466,7 +464,7 @@ if __name__ == "__main__":
 
     #        result3_stacked_bar(args)
 
-    #result4_scatterplot(args)
+    result4_scatterplot(args)
     #result5_knn(args)
 
-    result6_barplot_with_line(args)
+    #result6_barplot_with_line(args)
