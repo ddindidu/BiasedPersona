@@ -231,8 +231,9 @@ def result6_barplot_with_line(args):
     #ax.set_title("{}".format(brief_model_name(model)), fontsize='x-large')
     ax.text(x=0, y=0.9, s=brief_model_name(model), fontsize='x-large')
     fig.tight_layout()
-
-    plt.savefig('./result6_bar_lines/{}.pdf'.format(brief_model_name(model)), dpi=200, transparent=True)
+    
+    plt.savefig('./result6_bar_lines/{}.png'.format(brief_model_name(model)), dpi=1000, transparent=True)
+    plt.savefig('./result6_bar_lines/{}.pdf'.format(brief_model_name(model)), dpi=1000, transparent=True)
 
     plt.show()
 

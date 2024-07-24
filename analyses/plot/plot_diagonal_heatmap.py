@@ -454,6 +454,10 @@ def result2_for_case(args):
             save_dir = './result_2_TB_ti/tbti_case'
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
+
+            save_file = '{}_{}_{}_only_TBti.png'.format(model, cat, context)
+            plt.savefig(os.path.join(save_dir, save_file), dpi=600, transparent=True)
+
             save_file = '{}_{}_{}_only_TBti.pdf'.format(model, cat, context)
             plt.savefig(os.path.join(save_dir, save_file), dpi=200)
 

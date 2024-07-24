@@ -105,7 +105,7 @@ def result1_main_heatmap(args):
 
     fig.tight_layout()
 
-    plt.savefig(os.path.join(args.save_dir, 'result_tables_each.png'), dpi=200)
+    plt.savefig(os.path.join(args.save_dir, 'result_tables_each.png'), dpi=600, transparent=True)
     plt.savefig(os.path.join(args.save_dir, 'result_tables_each.pdf'), dpi=200)
 
     plt.show()
@@ -238,7 +238,9 @@ def result3_stacked_bar(args):
 
     save_dir = './result3_stackedbar'
     save_file = '{}_stackedbar_{}.pdf'.format(args.model, category)
-    plt.savefig(os.path.join(save_dir, save_file), dpi=200, transparent=True)
+    plt.savefig(os.path.join(save_dir, save_file), dpi=600, transparent=True)
+    save_file = '{}_stackedbar_{}.png'.format(args.model, category)
+    plt.savefig(os.path.join(save_dir, save_file), dpi=600, transparent=True)
 
     plt.show()
 
@@ -336,8 +338,8 @@ def result5_knn(args):
         return targets
 
     for cat in args.categories:
-        dir = args.result2_dir
-        f_name = args.file_name_2.format(args.rp, args.cc)
+        dir = args.source_dir2
+        f_name = args.file_name_2.format(cat, 'ambig', args.rp, args.cc)
 
         file_path = os.path.join(dir, args.model, cat, f_name)
 
@@ -348,7 +350,8 @@ def result5_knn(args):
         context = 'amb'
         scores = ['polarity', 'amount']
 
-        tb_ti = df[['{}_{}_{}'.format(t, scores[0], context) for t in targets]]
+        tb_ti = df[['TB_{}'.format(t) for t in targets]]
+        #tb_ti = df[['{}_{}_{}'.format(t, scores[0], context) for t in targets]]
         #bamt_ti = df[['{}_{}_{}'.format(t, scores[1], context) for t in targets]]
         #tb = df[['TB_{}_{}'.format(scores[0], context)]]
         #pb = df[['PB_{}_{}'.format(scores[0], context)]]
@@ -376,7 +379,7 @@ def result5_knn(args):
         sns.scatterplot(x="PCA1", y="PCA2", hue='clusters', data=results, s=80)
 
         for i, (pca1, pca2) in results[['PCA1', 'PCA2']].iterrows():
-            plt.text(pca1+0.025, pca2, results.at[i, 'Persona'], color='black', fontsize=15)
+            plt.text(pca1+0.025, pca2, results.at[i, 'Persona'], color='black', fontsize='medium')
         plt.title(cat, fontsize='xx-large')
 
         save_dir = './result5_pca'
@@ -394,8 +397,8 @@ def get_args():
     parser.add_argument('--source_file', type=str, default='{}_{}_rp_{}_cc_{}.csv')   # domain_context_rp_cc
     parser.add_argument('--file_name_2', type=str, default='aver_{}_{}_rp_{}_cc_{}.csv')    # domain_context_rp_cc
 
-    #parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
-    parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
+    parser.add_argument('--model', type=str, default='gpt-3.5-turbo-0613')
+    #parser.add_argument('--model', type=str, default='gpt-4-1106-preview')
     #parser.add_argument('--model', type=str, default='meta-llama/Llama-2-7b-chat-hf')
     parser.add_argument('--instruction_k', type=int, default=1)
     parser.add_argument('--category', type=str, default='Religion')
@@ -425,22 +428,23 @@ if __name__ == "__main__":
 
     #result1_main_heatmap(args)
 
-    result2(args)
+    #result2(args)
     #result2_for_case(args)
 
-    # for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
-    #     for cat in ['Age', 'Religion', 'Race_ethnicity']:
-    #         args.model = model
-    #         args.category = cat
-    #
-    #         if 'gpt-3.5' in args.model:
-    #             args.instruction_k=5
-    #         elif 'llama' in args.model:
-    #             args.instruction_k=3
-    #         else:
-    #             args.instruction_k=1
-    #
-    #         result3_stacked_bar(args)
+    #for model in ['meta-llama/Llama-2-7b-chat-hf', 'meta-llama/Llama-2-13b-chat-hf', 'meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', 'gpt-4-1106-preview', 'meta-llama/Llama-2-70b-chat-hf']:
+    for model in ['meta-llama/Llama-2-70b-chat-hf', 'gpt-3.5-turbo-0613', ]:
+        for cat in ['Age', 'Religion', 'Race_ethnicity']:
+            args.model = model
+            args.category = cat
+    
+            if 'gpt-3.5' in args.model:
+                args.instruction_k=5
+            elif 'llama' in args.model:
+                args.instruction_k=3
+            else:
+                args.instruction_k=1
+    
+            result3_stacked_bar(args)
 
     #result4_scatterplot(args)
     #result5_knn(args)
