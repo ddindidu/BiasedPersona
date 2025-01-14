@@ -7,17 +7,7 @@ import google.generativeai as genai
 import time, argparse
 
 OPENAI_API_KEY = [
-    "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",
-    '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',
-    "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",
-    "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",
-    "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",
-    "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",
-    "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",
-    "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",
-    "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",
-    "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",
-    "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"
+    "YOUR_OPEN_AI_KEY"
     ]
 # default
 client = openai.OpenAI(
